@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/light_gray"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:baselineAligned="false">
+
+    <!-- Menu -->
+    <LinearLayout
+        android:id="@+id/menuSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/menuIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@string/menu"
+            android:src="@drawable/ic_menu_book" />
+
+        <TextView
+            android:id="@+id/menuLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/menu"
+            android:textSize="12sp"
+            android:textColor="@color/gray" />
+    </LinearLayout>
+
+    <!-- Reservations -->
+    <LinearLayout
+        android:id="@+id/reservationsSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/reservationsIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@string/reservations"
+            android:src="@drawable/ic_reservation" />
+
+        <TextView
+            android:id="@+id/reservationsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reservations"
+            android:textSize="12sp"
+            android:textColor="@color/gray" />
+    </LinearLayout>
+
+    <!-- Notifications -->
+    <LinearLayout
+        android:id="@+id/notificationsSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/notificationsIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@string/notifications"
+            android:src="@drawable/ic_notifications" />
+
+        <TextView
+            android:id="@+id/notificationsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notifications"
+            android:textSize="12sp"
+            android:textColor="@color/gray" />
+    </LinearLayout>
+
+    <!-- Settings -->
+    <LinearLayout
+        android:id="@+id/settingsSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        tools:ignore="UseCompoundDrawables">
+
+        <ImageView
+            android:id="@+id/settingsIcon"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@string/settings"
+            android:src="@drawable/ic_settings" />
+
+        <TextView
+            android:id="@+id/settingsLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/settings"
+            android:textSize="12sp"
+            android:textColor="@color/gray" />
+    </LinearLayout>
+
+</LinearLayout>
