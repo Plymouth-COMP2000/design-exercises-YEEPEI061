@@ -138,7 +138,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Reservation Confirmed"
+                            android:text="Reservation Successful"
                             android:textStyle="bold"
                             android:textColor="@color/black"
                             android:textSize="14sp" />
@@ -148,13 +148,13 @@
                             android:layout_height="8dp"
                             android:background="@drawable/circle_bg"
                             android:backgroundTint="@color/my_primary"
-                            android:layout_marginTop="2dp" /> <!-- 👈 slight adjustment -->
+                            android:layout_marginTop="2dp" />
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Your reservation for 2 people on July 25, 2024, at 7:00 PM is confirmed."
+                        android:text="Your reservation for 2 people on 25 July, 2025, at 12:00 pm is successfully reserved."
                         android:textSize="12sp"
                         android:layout_marginTop="4dp" />
 
@@ -268,6 +268,68 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:text="Cancellation Successful"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="You have successfully cancelled your reservation for 20 July, 2025, at 8:00 PM."
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="2 hours ago"
+                        android:textColor="@color/gray"
+                        android:textSize="11sp"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/my_secondary"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="12dp"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/circle_bg"
+                    android:backgroundTint="@color/soft_red"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_cancel_circle"
+                    app:tint="@color/my_danger" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="Reservation Cancelled"
                             android:textStyle="bold"
                             android:textColor="@color/black"
@@ -278,7 +340,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Your reservation for July 20, 2024, at 8:00 PM has been cancelled."
+                        android:text="Your reservation for 20 July, 2025, at 8:00 PM has been cancelled."
                         android:textSize="12sp"
                         android:layout_marginTop="4dp" />
 

@@ -17,6 +17,7 @@
     <string name="createAccountText">Join us to explore and manage !</string>
 
     <string name="menu">Menu</string>
+    <string name="currentMenu">Current Menu</string>
     <string name="foodMenu">Food Menu</string>
     <string name="appetizers">Appetizers</string>
     <string name="mainCourses">Main Courses</string>
@@ -28,6 +29,15 @@
     <string name="reservations">Reservations</string>
     <string name="notifications">Notifications</string>
     <string name="settings">Settings</string>
+    <string name="delete">Delete</string>
+    <string name="filter">Filter</string>
+    <string name="addItem">Add Item</string>
+    <string name="addMenuItem">Add Menu Item</string>
+    <string name="itemName">Item Name</string>
+    <string name="description">Description</string>
+    <string name="price">Price (RM)</string>
+    <string name="category">Category</string>
+    <string name="image">Image</string>
 
     <string name="myReservations">My Reservations</string>
     <string name="edit">Edit</string>
@@ -51,6 +61,14 @@
     <string name="profile">Profile</string>
     <string name="profilePicture">Profile Picture</string>
     <string name="editProfile">Edit Profile</string>
+
+    <string-array name="categories">
+        <item>Appetizer</item>
+        <item>Main Course</item>
+        <item>Dessert</item>
+        <item>Beverage</item>
+    </string-array>
+
 
 
 </resources>

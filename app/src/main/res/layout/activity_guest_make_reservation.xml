@@ -245,7 +245,7 @@
                             android:layout_columnWeight="1"
                             android:layout_margin="6dp"
                             android:background="@drawable/rounded_image_bg"
-                            android:backgroundTint="@color/my_primary"
+                            android:backgroundTint="@color/gray"
                             android:foreground="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
                             android:focusable="true">
@@ -613,7 +613,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
                         android:background="@drawable/input_bg"
-                        android:padding="10dp"
+                        android:paddingVertical="10dp"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
                         android:hint="e.g. Anniversary, dietary restrictions"
