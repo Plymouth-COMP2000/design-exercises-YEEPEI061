@@ -1,6 +1,16 @@
 package com.example.softwareengineering;
 
-import android.app.Activity;
+import android.os.Bundle;
 
-public class StaffReservationActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class StaffReservationActivity extends AppCompatActivity {
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.acitivity_staff_reservation);
+
+
+
+    }
 }

@@ -1,8 +1,18 @@
 package com.example.softwareengineering;
 
-import android.app.Activity;
+import android.os.Bundle;
 
-public class StaffAddMenuItemActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class StaffMenuItemFormActivity extends AppCompatActivity {
+
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_staff_menu_item_form);
+
+
+
+    }
 }
 
 
