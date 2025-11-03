@@ -38,6 +38,7 @@
     <string name="price">Price (RM)</string>
     <string name="category">Category</string>
     <string name="image">Image</string>
+    <string name="icon">Icon</string>
 
     <string name="myReservations">My Reservations</string>
     <string name="edit">Edit</string>

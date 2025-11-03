@@ -23,7 +23,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:contentDescription="@string/menu"
-            android:src="@drawable/ic_menu_book" />
+            android:src="@drawable/ic_menu_book_outline" />
 
         <TextView
             android:id="@+id/menuLabel"
@@ -49,7 +49,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:contentDescription="@string/reservations"
-            android:src="@drawable/ic_reservation" />
+            android:src="@drawable/ic_reservation_outline" />
 
         <TextView
             android:id="@+id/reservationsLabel"
@@ -75,7 +75,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:contentDescription="@string/notifications"
-            android:src="@drawable/ic_notifications" />
+            android:src="@drawable/ic_notification_outline" />
 
         <TextView
             android:id="@+id/notificationsLabel"
@@ -101,7 +101,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:contentDescription="@string/settings"
-            android:src="@drawable/ic_settings" />
+            android:src="@drawable/ic_setting_outline" />
 
         <TextView
             android:id="@+id/settingsLabel"

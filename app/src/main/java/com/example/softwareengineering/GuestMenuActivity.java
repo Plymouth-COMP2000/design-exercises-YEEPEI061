@@ -20,6 +20,9 @@ public class GuestMenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guest_menu);
 
+        LayoutBottomNav.setupBottomNav(this, findViewById(android.R.id.content));
+        LayoutBottomNav.highlightSelected(this, findViewById(android.R.id.content), R.id.menuSection);
+
         // Find Views
         foodTab = findViewById(R.id.foodTab);
         drinkTab = findViewById(R.id.drinkTab);

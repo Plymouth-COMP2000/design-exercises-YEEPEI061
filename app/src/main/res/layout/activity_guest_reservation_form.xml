@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/app_background"
-    tools:context=".GuestMakeReservationActivity">
+    tools:context=".GuestReservationFormActivity">
 
     <!-- Header -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -623,6 +623,20 @@
                         android:drawableTint="@color/my_primary" />
             </LinearLayout>
 
+            <Button
+                android:id="@+id/cancelReservationButton"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                app:icon="@drawable/ic_cancel_circle"
+                app:iconGravity="textStart"
+                app:iconPadding="8dp"
+                app:iconTint="@color/my_danger"
+                android:text="@string/cancelReservation"
+                android:textColor="@color/my_danger"
+                android:textStyle="bold"
+                android:backgroundTint="@color/soft_red"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp" />
 
         </LinearLayout>
     </ScrollView>
@@ -632,23 +646,32 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <Button
-            android:id="@+id/confirmButton"
-            android:layout_width="match_parent"
+            android:id="@+id/cancelButton"
+            android:layout_width="0dp"
             android:layout_height="50dp"
-            android:text="Confirm Reservation"
-            android:textColor="@android:color/white"
-            android:drawablePadding="8dp"
-            app:icon="@drawable/ic_check"
-            app:iconPadding="8dp"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:textColor="@color/my_primary"
             android:textStyle="bold"
-            app:iconTint="@android:color/white"
-            android:backgroundTint="@color/my_primary"
-            app:iconGravity="textStart" />
+            android:backgroundTint="@color/my_tertiary"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="@string/saveChanges"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:backgroundTint="@color/my_primary"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

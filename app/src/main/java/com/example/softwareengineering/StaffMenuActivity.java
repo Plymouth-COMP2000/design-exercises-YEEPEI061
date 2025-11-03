@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,6 +21,9 @@ public class StaffMenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_staff_menu);
+
+        LayoutBottomNav.setupBottomNav(this, findViewById(android.R.id.content));
+        LayoutBottomNav.highlightSelected(this, findViewById(android.R.id.content), R.id.menuSection);
 
         // Find Views
         foodTab = findViewById(R.id.foodTab);
@@ -39,6 +44,14 @@ public class StaffMenuActivity extends AppCompatActivity {
         drinkTab.setOnClickListener(v -> {
             loadFragment(new StaffDrinkMenuFragment());
             setActiveTab(false);
+        });
+
+        Button bottomButton = findViewById(R.id.bottomButton);
+
+        bottomButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, StaffMenuItemFormActivity.class);
+            intent.putExtra("mode", "add");
+            startActivity(intent);
         });
     }
 

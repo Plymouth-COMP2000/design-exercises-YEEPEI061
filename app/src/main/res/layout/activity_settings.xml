@@ -54,13 +54,16 @@
                 android:layout_marginBottom="8dp" />
 
             <LinearLayout
+                android:id="@+id/profileSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:padding="10dp"
                 android:background="@drawable/input_bg"
-                android:layout_marginBottom="4dp">
+                android:layout_marginBottom="4dp"
+                android:clickable="true"
+                android:focusable="true">
 
                 <FrameLayout
                     android:layout_width="56dp"

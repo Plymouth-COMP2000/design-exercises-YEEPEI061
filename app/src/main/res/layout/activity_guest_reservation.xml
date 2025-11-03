@@ -76,7 +76,7 @@
                     <ImageView
                         android:layout_width="54dp"
                         android:layout_height="54dp"
-                        android:src="@drawable/ic_reservation"
+                        android:src="@drawable/ic_reservation_outline"
                         android:backgroundTint="@color/my_tertiary"
                         android:padding="8dp"
                         app:tint="@color/my_primary"
@@ -125,6 +125,7 @@
                     android:gravity="end">
 
                     <Button
+                        android:id="@+id/cancelReservationButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/cancel"
@@ -132,6 +133,7 @@
                         android:backgroundTint="@color/my_tertiary"/>
 
                     <Button
+                        android:id="@+id/editButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/edit"
