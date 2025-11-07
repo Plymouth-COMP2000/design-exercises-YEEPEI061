@@ -19,6 +19,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     this,
                     R.drawable.ic_check_circle,
                     getResources().getColor(R.color.green, null),
+                    "Save Changes",
                     "Are you sure you want to save changes?",
                     () -> {
                         Toast.makeText(this, "Changes saved successfully!", Toast.LENGTH_SHORT).show();

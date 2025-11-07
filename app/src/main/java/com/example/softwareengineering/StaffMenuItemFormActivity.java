@@ -61,6 +61,7 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
                         this,
                         R.drawable.ic_check_circle,
                         getResources().getColor(R.color.green, null),
+                        "Save Changes",
                         "Are you sure you want to save changes?",
                         () -> {
                             Toast.makeText(this, "Changes saved successfully!", Toast.LENGTH_SHORT).show();
@@ -97,6 +98,7 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
                             this,
                             R.drawable.ic_check_circle,
                             getResources().getColor(R.color.green, null),
+                            "Add Item",
                             "Confirm adding this new item?",
                             () -> {
                                 Toast.makeText(this, "Item added successfully!", Toast.LENGTH_SHORT).show();

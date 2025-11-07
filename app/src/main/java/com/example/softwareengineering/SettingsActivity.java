@@ -27,7 +27,8 @@ public class SettingsActivity extends AppCompatActivity {
                 PopupHelper.showPopup(
                         this,
                         R.drawable.ic_warning,
-                        ContextCompat.getColor(this, R.color.pending),
+                        ContextCompat.getColor(this, R.color.my_danger),
+                        "Log Out",
                         "Are you sure you want to logout?",
                         this::logoutUser
                 )

@@ -25,6 +25,7 @@ public class StaffDrinkMenuFragment extends Fragment {
                     requireContext(),
                     R.drawable.ic_warning,
                     getResources().getColor(R.color.my_danger, null),
+                    "Delete Item",
                     "Are you sure you want to delete this item?",
                     this::deleteFoodItem
             );

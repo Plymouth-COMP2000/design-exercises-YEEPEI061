@@ -22,12 +22,12 @@ public class StaffFoodMenuFragment extends Fragment {
         deleteButton.setOnClickListener(v -> {
             PopupHelper.showPopup(
                     requireContext(),
-                    R.drawable.ic_delete,
+                    R.drawable.ic_warning,
                     getResources().getColor(R.color.my_danger, null),
+                    "Delete Item",
                     "Are you sure you want to delete this item?",
                     this::deleteFoodItem
             );
-
         });
 
         ImageButton editButton = view.findViewById(R.id.editButton);
@@ -40,8 +40,17 @@ public class StaffFoodMenuFragment extends Fragment {
         return view;
     }
 
-    private void deleteFoodItem() {
-        // your actual delete logic here
+//    private void deleteFoodItem() {
+//        // your actual delete logic here
+//        PopupHelper.showSuccessPopup(
+//                requireContext(),
+//                R.drawable.ic_check_circle, // your success icon
+//                getResources().getColor(R.color.green, null),
+//                "Item deleted successfully"
+//        );
+//    }
+
+    private void deleteFoodItem() { 
         Toast.makeText(requireContext(), "Item deleted successfully", Toast.LENGTH_SHORT).show();
     }
 }

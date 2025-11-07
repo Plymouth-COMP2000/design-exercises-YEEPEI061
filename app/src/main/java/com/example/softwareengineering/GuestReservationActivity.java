@@ -36,7 +36,8 @@ public class GuestReservationActivity extends AppCompatActivity {
             PopupHelper.showPopup(
                     this,
                     R.drawable.ic_cancel_circle,
-                    getResources().getColor(R.color.pending, null),
+                    getResources().getColor(R.color.my_danger, null),
+                    "Cancel Reservation",
                     "Are you sure you want to cancel this reservation?",
                     () -> {
                         Toast.makeText(this, "Reservation cancelled successfully!", Toast.LENGTH_SHORT).show();

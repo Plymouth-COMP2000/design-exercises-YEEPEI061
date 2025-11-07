@@ -22,6 +22,7 @@ public class StaffReservationActivity extends AppCompatActivity {
                    this,
                     R.drawable.ic_cancel_circle,
                     getResources().getColor(R.color.my_danger, null),
+                    "Cancel Reservation",
                     "Are you sure you want to cancel this reservation?",
                     this::cancelReservation
             );

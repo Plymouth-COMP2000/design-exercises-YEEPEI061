@@ -67,6 +67,7 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                         this,
                         R.drawable.ic_check_circle,
                         getResources().getColor(R.color.green, null),
+                        "Save Changes",
                         "Are you sure you want to save changes?",
                         () -> {
                             Toast.makeText(this, "Changes saved successfully!", Toast.LENGTH_SHORT).show();
@@ -79,7 +80,8 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                 PopupHelper.showPopup(
                         this,
                         R.drawable.ic_cancel_circle,
-                        getResources().getColor(R.color.pending, null),
+                        getResources().getColor(R.color.my_danger, null),
+                        "Cancel Reservation",
                         "Are you sure you want to cancel this reservation?",
                         () -> {
                             Toast.makeText(this, "Reservation cancelled successfully!", Toast.LENGTH_SHORT).show();
@@ -118,6 +120,7 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                             this,
                             R.drawable.ic_check_circle,
                             getResources().getColor(R.color.green, null),
+                            "Add Reservation",
                             "Confirm adding this reservation?",
                             () -> {
                                 Toast.makeText(this, "Reservation added successfully!", Toast.LENGTH_SHORT).show();
