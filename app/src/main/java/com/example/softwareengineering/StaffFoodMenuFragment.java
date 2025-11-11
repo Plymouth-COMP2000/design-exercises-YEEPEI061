@@ -50,7 +50,7 @@ public class StaffFoodMenuFragment extends Fragment {
 //        );
 //    }
 
-    private void deleteFoodItem() { 
-        Toast.makeText(requireContext(), "Item deleted successfully", Toast.LENGTH_SHORT).show();
+    private void deleteFoodItem() {
+        Toast.makeText(requireContext(), "Item deleted successfully!", Toast.LENGTH_SHORT).show();
     }
 }

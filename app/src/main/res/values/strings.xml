@@ -1,5 +1,5 @@
 <resources>
-    <string name="appName">SoftwareEngineering</string>
+    <string name="appName">Bluecrest</string>
     <string name="welcomeBack">Welcome Back</string>
     <string name="welcomeText">Login to explore and manage !</string>
     <string name="staff">Staff</string>
@@ -34,9 +34,13 @@
     <string name="addItem">Add Item</string>
     <string name="addMenuItem">Add Menu Item</string>
     <string name="itemName">Item Name</string>
+    <string name="itemNameRequired">Item Name <font color="#FF0000">*</font></string>
     <string name="description">Description</string>
+    <string name="descriptionRequired">Description <font color="#FF0000">*</font></string>
     <string name="price">Price (RM)</string>
+    <string name="priceRequired">Price (RM) <font color="#FF0000">*</font></string>
     <string name="category">Category</string>
+    <string name="categoryRequired">Category <font color="#FF0000">*</font></string>
     <string name="image">Image</string>
     <string name="icon">Icon</string>
 
@@ -50,10 +54,14 @@
     <string name="makeNewReservation">Make New Reservation</string>
     <string name="makeAReservation">Make A Reservation</string>
     <string name="date">Date</string>
+    <string name="dateRequired">Date <font color="#FF0000">*</font></string>
     <string name="time">Time</string>
+    <string name="timeRequired">Time <font color="#FF0000">*</font></string>
     <string name="numberOfGuests">Number of Guests</string>
+    <string name="numberOfGuestsRequired">Number of Guests <font color="#FF0000">*</font></string>
     <string name="selectTable">Select Your Table</string>
-    <string name="specialRequests">Special Requests (optional)</string>
+    <string name="selectTableRequired">Select Your Table <font color="#FF0000">*</font></string>
+    <string name="specialRequests">Special Requests</string>
     <string name="editReservation">Edit Reservation</string>
     <string name="cancelReservation">Cancel Reservation</string>
     <string name="saveChanges">Save Changes</string>

@@ -80,7 +80,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/date"
+                        android:text="@string/dateRequired"
                         android:textSize="16sp"
                         android:textColor="@color/my_primary"
                         android:layout_marginBottom="4dp" />
@@ -110,7 +110,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/time"
+                        android:text="@string/timeRequired"
                         android:textSize="16sp"
                         android:textColor="@color/my_primary"
                         android:layout_marginBottom="4dp" />
@@ -142,7 +142,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/numberOfGuests"
+                    android:text="@string/numberOfGuestsRequired"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
                     android:layout_marginBottom="4dp" />

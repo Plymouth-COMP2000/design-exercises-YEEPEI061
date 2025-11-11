@@ -79,12 +79,11 @@ public class SignUpActivity extends AppCompatActivity {
                 return;
             }
 
-            Toast.makeText(SignUpActivity.this, "Sign up successful", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignUpActivity.this, "Account created! Please log in", Toast.LENGTH_SHORT).show();
 
             // All checks passed → go to LoginActivity
             Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
             startActivity(intent);
-            Toast.makeText(SignUpActivity.this, "Account created successfully!", Toast.LENGTH_SHORT).show();
         });
 
         // Sign up

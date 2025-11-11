@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            Toast.makeText(LoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
 
             if (tickStaff.getVisibility() == View.VISIBLE) {
                 Intent intent = new Intent(LoginActivity.this, StaffMenuActivity.class);

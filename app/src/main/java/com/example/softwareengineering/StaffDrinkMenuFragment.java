@@ -43,6 +43,6 @@ public class StaffDrinkMenuFragment extends Fragment {
 
     private void deleteFoodItem() {
         // your actual delete logic here
-        Toast.makeText(requireContext(), "Item deleted successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), "Item deleted successfully!", Toast.LENGTH_SHORT).show();
     }
 }

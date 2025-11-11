@@ -31,6 +31,6 @@ public class StaffReservationActivity extends AppCompatActivity {
 
     private void cancelReservation() {
         // your actual delete logic here
-        Toast.makeText(this, "Reservation cancelled successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Reservation cancelled successfully!", Toast.LENGTH_SHORT).show();
     }
 }

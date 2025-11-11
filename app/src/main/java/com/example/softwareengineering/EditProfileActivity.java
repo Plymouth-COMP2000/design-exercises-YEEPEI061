@@ -17,8 +17,8 @@ public class EditProfileActivity extends AppCompatActivity {
         saveButton.setOnClickListener(v -> {
             PopupHelper.showPopup(
                     this,
-                    R.drawable.ic_check_circle,
-                    getResources().getColor(R.color.green, null),
+                    R.drawable.ic_info,
+                    getResources().getColor(R.color.my_primary, null),
                     "Save Changes",
                     "Are you sure you want to save changes?",
                     () -> {

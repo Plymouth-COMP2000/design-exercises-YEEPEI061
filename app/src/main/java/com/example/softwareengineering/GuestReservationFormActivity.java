@@ -118,8 +118,8 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                 } else {
                     PopupHelper.showPopup(
                             this,
-                            R.drawable.ic_check_circle,
-                            getResources().getColor(R.color.green, null),
+                            R.drawable.ic_info,
+                            getResources().getColor(R.color.my_primary, null),
                             "Add Reservation",
                             "Confirm adding this reservation?",
                             () -> {
