@@ -79,7 +79,6 @@
         android:id="@+id/reservationScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:paddingHorizontal="16dp"
         app:layout_constraintTop_toBottomOf="@id/filtersScrollView"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
