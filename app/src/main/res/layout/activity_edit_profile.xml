@@ -261,6 +261,104 @@
                     android:text="+60 11 234 5678"
                     android:drawableTint="@color/my_primary" />
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/passwordField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/newPassword"
+                    android:textSize="16sp"
+                    android:textColor="@color/my_primary"
+                    android:layout_marginBottom="4dp" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/input_bg">
+
+                    <EditText
+                        android:id="@+id/passwordInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/input_bg"
+                        android:drawableStart="@drawable/ic_lock"
+                        android:drawablePadding="8dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:textColor="@color/black"
+                        android:inputType="textPassword"
+                        android:gravity="center_vertical"
+                        android:drawableTint="@color/my_primary"
+                        tools:ignore="MissingConstraints" />
+
+                    <ImageView
+                        android:id="@+id/togglePassword"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_visibility_off"
+                        app:tint="@color/my_secondary"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/passwordInput"
+                        app:layout_constraintBottom_toBottomOf="@id/passwordInput"
+                        android:layout_marginEnd="12dp" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/confirmPasswordField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/confirmNewPassword"
+                    android:textSize="16sp"
+                    android:textColor="@color/my_primary"
+                    android:layout_marginBottom="4dp" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/input_bg">
+
+                    <EditText
+                        android:id="@+id/confirmPasswordInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@drawable/input_bg"
+                        android:drawableStart="@drawable/ic_lock"
+                        android:drawablePadding="8dp"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:textColor="@color/black"
+                        android:inputType="textPassword"
+                        android:gravity="center_vertical"
+                        android:drawableTint="@color/my_primary"
+                        tools:ignore="MissingConstraints" />
+
+                    <ImageView
+                        android:id="@+id/toggleConfirmPassword"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_visibility_off"
+                        app:tint="@color/my_secondary"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/confirmPasswordInput"
+                        app:layout_constraintBottom_toBottomOf="@id/confirmPasswordInput"
+                        android:layout_marginEnd="12dp" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+
         </LinearLayout>
     </ScrollView>
 
@@ -297,5 +395,22 @@
             android:textStyle="bold"
             android:backgroundTint="@color/my_primary"/>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#55000000"
+        android:visibility="gone"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

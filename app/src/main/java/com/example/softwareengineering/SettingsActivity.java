@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -21,6 +22,23 @@ public class SettingsActivity extends AppCompatActivity {
 
         LayoutBottomNav.setupBottomNav(this, findViewById(android.R.id.content));
         LayoutBottomNav.highlightSelected(this, findViewById(android.R.id.content), R.id.settingsSection);
+
+        TextView usernameText = findViewById(R.id.username);
+        TextView prefOne = findViewById(R.id.prefOne);
+        TextView prefTwo = findViewById(R.id.prefTwo);
+        TextView prefThree = findViewById(R.id.prefThree);
+
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String username = prefs.getString("username", "");
+        String role = prefs.getString("role", "");
+
+        usernameText.setText(username);
+
+        if ("staff".equals(role)) {
+            prefOne.setText("New Reservations");
+            prefTwo.setText("Reservation Changes");
+            prefThree.setText("Cancellations");
+        }
 
         Button logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(v ->

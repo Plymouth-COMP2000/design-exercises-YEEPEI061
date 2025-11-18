@@ -189,22 +189,22 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/emailAddress"
+                android:text="@string/username"
                 android:textSize="16sp"
                 android:textColor="@color/my_primary"
                 android:layout_marginBottom="4dp" />
 
             <EditText
-                android:id="@+id/emailInput"
+                android:id="@+id/usernameInput"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:background="@drawable/input_bg"
-                android:drawableStart="@drawable/ic_email"
+                android:drawableStart="@drawable/ic_person"
                 android:drawablePadding="8dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="12dp"
                 android:textColor="@color/black"
-                android:inputType="textEmailAddress"
+                android:inputType="text"
                 android:gravity="center_vertical"
                 android:drawableTint="@color/my_primary" />
         </LinearLayout>

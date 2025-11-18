@@ -15,6 +15,8 @@
     <string name="signUp">Sign Up</string>
     <string name="createAccount">Create Account</string>
     <string name="createAccountText">Join us to explore and manage !</string>
+    <string name="newPassword">New Password</string>
+    <string name="confirmNewPassword">Confirm New Password</string>
 
     <string name="menu">Menu</string>
     <string name="currentMenu">Current Menu</string>

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 
@@ -16,11 +17,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
+
 public class LoginActivity extends AppCompatActivity {
 
     CardView staffRole, guestRole;
     ImageView tickStaff, tickGuest, togglePassword;
     private EditText passwordInput;
+    private static final String BASE_URL = "http://10.240.72.69/comp2000/coursework/";
+    private static final String STUDENT_ID = "bsse2506028";
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -67,19 +76,15 @@ public class LoginActivity extends AppCompatActivity {
 
         // Login button setup
         Button loginButton = findViewById(R.id.loginButton);
-        EditText emailInput = findViewById(R.id.emailInput);
+        EditText usernameInput = findViewById(R.id.usernameInput);
 
         loginButton.setOnClickListener(v -> {
-            String email = emailInput.getText().toString().trim();
+            String username = usernameInput.getText().toString().trim();
             String password = passwordInput.getText().toString().trim();
+            String selectedRole = tickStaff.getVisibility() == View.VISIBLE ? "staff" : "guest";
 
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(LoginActivity.this, "Please enter email and password", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                Toast.makeText(LoginActivity.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
+            if (username.isEmpty() || password.isEmpty()) {
+                Toast.makeText(LoginActivity.this, "Please enter username and password", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -88,16 +93,63 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+            String url = BASE_URL + "read_user/" + STUDENT_ID + "/" + username;
 
-            if (tickStaff.getVisibility() == View.VISIBLE) {
-                Intent intent = new Intent(LoginActivity.this, StaffMenuActivity.class);
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(LoginActivity.this, GuestMenuActivity.class);
-                startActivity(intent);
-            }
+            JsonObjectRequest request = new JsonObjectRequest(
+                    Request.Method.GET,
+                    url,
+                    null,
+                    response -> {
+                        try {
+                            if (response.has("user")) {
+                                JSONObject user = response.getJSONObject("user");
+                                String correctPassword = user.getString("password");
+                                String usertype = user.getString("usertype");
+
+                                if (!password.equals(correctPassword)) {
+                                    Toast.makeText(LoginActivity.this, "Incorrect password", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                                if (!selectedRole.equals(usertype)) {
+                                    Toast.makeText(LoginActivity.this, "Selected role does not match account role", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                                Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+
+                                if (selectedRole.equals("staff")) {
+                                    saveUserSession(username);
+                                    startActivity(new Intent(LoginActivity.this, StaffMenuActivity.class));
+                                } else {
+                                    saveUserSession(username);
+                                    startActivity(new Intent(LoginActivity.this, GuestMenuActivity.class));
+                                }
+
+                            } else {
+                                Toast.makeText(LoginActivity.this, "User not found. Please sign up first.", Toast.LENGTH_LONG).show();
+                                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
+                            }
+
+                        } catch (Exception e) {
+                            Log.e("LoginError", "Exception parsing user data", e);
+                            Toast.makeText(LoginActivity.this, "Error reading user data", Toast.LENGTH_SHORT).show();
+                        }
+                    },
+                    error -> {
+                        if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
+                            Toast.makeText(LoginActivity.this, "User not found. Please sign up first.", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Login failed. Check network or user ID", Toast.LENGTH_LONG).show();
+                            Log.e("LoginError", "Volley error", error);
+                        }
+                    }
+            );
+
+            Volley.newRequestQueue(LoginActivity.this).add(request);
         });
+
 
         // Sign up
         TextView signUpText = findViewById(R.id.signUpText);
@@ -132,5 +184,13 @@ public class LoginActivity extends AppCompatActivity {
 
         editor.apply();
     }
+
+    private void saveUserSession(String username) {
+        getSharedPreferences("UserSession", MODE_PRIVATE)
+                .edit()
+                .putString("username", username)
+                .apply();
+    }
+
 
 }
