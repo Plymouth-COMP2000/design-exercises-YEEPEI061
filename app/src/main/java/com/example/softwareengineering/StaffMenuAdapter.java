@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
-public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder> {
+public class StaffMenuAdapter extends RecyclerView.Adapter<StaffMenuAdapter.MenuViewHolder> {
 
     private List<MenuItemModel> menuList;
     private Context context;
@@ -24,7 +24,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
         void onDelete(MenuItemModel item);
     }
 
-    public MenuAdapter(Context context, List<MenuItemModel> menuList, MenuItemListener listener) {
+    public StaffMenuAdapter(Context context, List<MenuItemModel> menuList, MenuItemListener listener) {
         this.context = context;
         this.menuList = menuList;
         this.listener = listener;
@@ -33,7 +33,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
     @NonNull
     @Override
     public MenuViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_menu, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_menu_staff, parent, false);
         return new MenuViewHolder(view);
     }
 
@@ -47,11 +47,11 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.MenuViewHolder
                 : String.format("%.2f", price);
         holder.itemPrice.setText("RM " + priceText);
         holder.itemCategory.setText(item.getType());
-        String imageUriString = item.getImageUri(); // or item.getImageUri()
+        String imageUriString = item.getImageUri();
         if (imageUriString != null && !imageUriString.isEmpty()) {
             holder.itemImage.setImageURI(Uri.parse(imageUriString));
         } else {
-            holder.itemImage.setImageResource(R.drawable.ic_image); // fallback
+            holder.itemImage.setImageResource(R.drawable.ic_image);
         }
 
         if (position == menuList.size() - 1) {

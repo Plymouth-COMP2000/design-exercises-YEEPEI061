@@ -23,7 +23,6 @@ public class GuestMenuActivity extends AppCompatActivity {
         LayoutBottomNav.setupBottomNav(this, findViewById(android.R.id.content));
         LayoutBottomNav.highlightSelected(this, findViewById(android.R.id.content), R.id.menuSection);
 
-        // Find Views
         foodTab = findViewById(R.id.foodTab);
         drinkTab = findViewById(R.id.drinkTab);
         foodText = findViewById(R.id.foodMenuTab);
@@ -31,16 +30,16 @@ public class GuestMenuActivity extends AppCompatActivity {
         foodUnderline = findViewById(R.id.foodUnderline);
         drinkUnderline = findViewById(R.id.drinkUnderline);
 
-        loadFragment(new GuestFoodMenuFragment());
+        loadFragment(GuestMenuListFragment.newInstance("food"));
         setActiveTab(true);
 
         foodTab.setOnClickListener(v -> {
-            loadFragment(new GuestFoodMenuFragment());
+            loadFragment(GuestMenuListFragment.newInstance("food"));
             setActiveTab(true);
         });
 
         drinkTab.setOnClickListener(v -> {
-            loadFragment(new GuestDrinkMenuFragment());
+            loadFragment(GuestMenuListFragment.newInstance("drink"));
             setActiveTab(false);
         });
     }

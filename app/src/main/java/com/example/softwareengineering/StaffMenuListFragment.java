@@ -21,7 +21,7 @@ public class StaffMenuListFragment extends Fragment {
 
     private String category;
     private MenuDatabaseHelper dbHelper;
-    private MenuAdapter adapter;
+    private StaffMenuAdapter adapter;
     private RecyclerView recyclerView;
 
     @Override
@@ -62,7 +62,7 @@ public class StaffMenuListFragment extends Fragment {
         });
 
         // Start with an empty list
-        adapter = new MenuAdapter(getContext(), new ArrayList<>(), new MenuAdapter.MenuItemListener() {
+        adapter = new StaffMenuAdapter(getContext(), new ArrayList<>(), new StaffMenuAdapter.MenuItemListener() {
 
             @Override
             public void onEdit(MenuItemModel item) {
