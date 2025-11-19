@@ -7,15 +7,18 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class StaffMenuActivity extends AppCompatActivity {
 
     LinearLayout foodTab, drinkTab;
     TextView foodText, drinkText;
     View foodUnderline, drinkUnderline;
+    private String currentCategory = "food";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,24 +36,27 @@ public class StaffMenuActivity extends AppCompatActivity {
         foodUnderline = findViewById(R.id.foodUnderline);
         drinkUnderline = findViewById(R.id.drinkUnderline);
 
-        loadFragment(new StaffFoodMenuFragment());
+        loadFragment(StaffMenuListFragment.newInstance("food"));
         setActiveTab(true);
 
         foodTab.setOnClickListener(v -> {
-            loadFragment(new StaffFoodMenuFragment());
+            currentCategory = "food";
+            loadFragment(StaffMenuListFragment.newInstance("food"));
             setActiveTab(true);
         });
 
         drinkTab.setOnClickListener(v -> {
-            loadFragment(new StaffDrinkMenuFragment());
+            currentCategory = "drink";
+            loadFragment(StaffMenuListFragment.newInstance("drink"));
             setActiveTab(false);
         });
 
-        Button bottomButton = findViewById(R.id.bottomButton);
+        FloatingActionButton bottomButton = findViewById(R.id.bottomButton);
 
         bottomButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, StaffMenuItemFormActivity.class);
             intent.putExtra("mode", "add");
+            intent.putExtra("category", currentCategory);
             startActivity(intent);
         });
     }

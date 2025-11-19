@@ -32,16 +32,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:gravity="center" />
 
-        <ImageButton
-            android:id="@+id/filterButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_filter"
-            android:contentDescription="@string/filter"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Tabs -->
@@ -118,23 +108,39 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <Button
+<!--    <Button-->
+<!--        android:id="@+id/bottomButton"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="@string/addItem"-->
+<!--        android:backgroundTint="@color/my_primary"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        android:layout_margin="16dp"-->
+<!--        android:drawablePadding="8dp"-->
+<!--        app:icon="@drawable/ic_add"-->
+<!--        app:iconGravity="textStart"-->
+<!--        app:iconPadding="8dp"-->
+<!--        app:iconTint="@android:color/white"-->
+<!--        android:textStyle="bold"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/bottomNav"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/bottomButton"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/addItem"
-        android:backgroundTint="@color/my_primary"
-        android:textColor="@android:color/white"
-        android:layout_margin="16dp"
-        android:drawablePadding="8dp"
-        app:icon="@drawable/ic_add"
-        app:iconGravity="textStart"
-        app:iconPadding="8dp"
-        app:iconTint="@android:color/white"
-        android:textStyle="bold"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/my_primary"
+        android:contentDescription="@string/addItem"
+        app:tint="@color/white"
+        app:fabCustomSize="54dp"
+        android:alpha="0.8"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="12dp"/>
+
 
     <!-- Bottom Navigation -->
     <include
