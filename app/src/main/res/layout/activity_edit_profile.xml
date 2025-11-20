@@ -132,7 +132,6 @@
                         android:textColor="@color/black"
                         android:inputType="textPersonName"
                         android:gravity="center_vertical"
-                        android:text="Maria"
                         android:drawableTint="@color/my_primary" />
                 </LinearLayout>
 
@@ -164,7 +163,6 @@
                         android:textColor="@color/black"
                         android:inputType="textPersonName"
                         android:gravity="center_vertical"
-                        android:text="Garcia"
                         android:drawableTint="@color/my_primary"/>
                 </LinearLayout>
             </LinearLayout>
@@ -196,7 +194,6 @@
                     android:textColor="@color/black"
                     android:inputType="textPersonName"
                     android:gravity="center_vertical"
-                    android:text="Maria Garcia"
                     android:drawableTint="@color/my_primary" />
             </LinearLayout>
 
@@ -227,7 +224,6 @@
                     android:textColor="@color/black"
                     android:inputType="textEmailAddress"
                     android:gravity="center_vertical"
-                    android:text="maria.garcia@gmail.com"
                     android:drawableTint="@color/my_primary" />
             </LinearLayout>
 
@@ -258,7 +254,6 @@
                     android:textColor="@color/black"
                     android:inputType="phone"
                     android:gravity="center_vertical"
-                    android:text="+60 11 234 5678"
                     android:drawableTint="@color/my_primary" />
             </LinearLayout>
 

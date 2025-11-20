@@ -28,12 +28,26 @@ public class MenuItemModel {
         this.description = description;
     }
 
+    public int getId() {
+        return id;
+    }
 
-    public int getId() { return id; }
-    public String getName() { return name; }
-    public String getCategory() { return category; }
-    public String getType() { return type; }
-    public double getPrice() { return price; }
-    public String getImageUri() { return imageUri; }
-    public String getDescription() { return description; }
+    public String getName() {
+        return name;
+    }
+    public String getCategory() {
+        return category;
+    }
+    public String getType() {
+        return type;
+    }
+    public double getPrice() {
+        return price;
+    }
+    public String getImageUri() {
+        return imageUri;
+    }
+    public String getDescription() {
+        return description;
+    }
 }
