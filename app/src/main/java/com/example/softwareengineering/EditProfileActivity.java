@@ -151,6 +151,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     url,
                     jsonBody,
                     response -> {
+                        prefs.edit().putString("username", username).apply();
                         Toast.makeText(EditProfileActivity.this, "Changes saved successfully!", Toast.LENGTH_SHORT).show();
                         loadingOverlay.setVisibility(View.GONE);
                         finish();

@@ -9,12 +9,10 @@
     tools:context=".StaffReservationActivity">
 
     <!-- Header -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
         android:background="@color/light_gray"
         android:padding="16dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -22,234 +20,87 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="@string/reservations"
             android:textSize="20sp"
             android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:gravity="center" />
-    </LinearLayout>
 
-    <!-- Filters -->
-    <HorizontalScrollView
-        android:id="@+id/filtersScrollView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
+        <ImageButton
+            android:id="@+id/filterButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_filter"
+            android:contentDescription="@string/filter"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <Button
-                android:id="@+id/filterToday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Today"
-                android:backgroundTint="@color/my_primary"
-                android:textColor="@android:color/white"
-                android:layout_marginEnd="8dp"
-                android:drawableEnd="@drawable/ic_arrow_dropdown"
-                android:drawableTint="@color/white"/>
+    <!-- Filters -->
+<!--    <HorizontalScrollView-->
+<!--        android:id="@+id/filtersScrollView"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:paddingStart="16dp"-->
+<!--        android:paddingEnd="16dp"-->
+<!--        android:paddingTop="12dp"-->
+<!--        android:paddingBottom="8dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/header"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent">-->
 
-            <Button
-                android:id="@+id/filterGuests"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2 guests"
-                android:drawableEnd="@drawable/ic_arrow_dropdown"
-                android:drawableTint="@color/white"
-                android:backgroundTint="@color/my_primary"
-                android:textColor="@android:color/white"/>
-        </LinearLayout>
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center_vertical">-->
 
-    </HorizontalScrollView>
+<!--            <Button-->
+<!--                android:id="@+id/filterButton"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Filter"-->
+<!--                android:backgroundTint="@color/my_primary"-->
+<!--                android:textColor="@android:color/white"-->
+<!--                android:drawableEnd="@drawable/ic_arrow_dropdown"-->
+<!--                android:drawableTint="@color/white"/>-->
 
-    <!-- Reservation List -->
-    <ScrollView
-        android:id="@+id/reservationScrollView"
+<!--        </LinearLayout>-->
+
+<!--    </HorizontalScrollView>-->
+
+    <TextView
+        android:id="@+id/noReservationText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="No Reservation"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="20dp"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/staffReservationRecycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/filtersScrollView"
+        app:layout_constraintTop_toBottomOf="@id/header"
         app:layout_constraintBottom_toTopOf="@id/bottomNav"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <LinearLayout
-            android:id="@+id/reservationContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <!-- Reservation Item Example -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:background="@color/my_tertiary"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/sample_profile"
-                    android:scaleType="centerCrop"
-                    android:clipToOutline="true"
-                    android:contentDescription="Customer Avatar"
-                    android:background="@drawable/circle_bg"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Maria Garcia"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="12:00 PM • Table 2"
-                        android:textColor="@color/gray"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-
-                <ImageButton
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_notification_active"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="@color/my_primary"
-                    android:contentDescription="Notify"/>
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/my_secondary"
-                android:layout_marginTop="0dp" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/sample_profile"
-                    android:scaleType="centerCrop"
-                    android:clipToOutline="true"
-                    android:contentDescription="Customer Avatar"
-                    android:background="@drawable/circle_bg"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Maria Garcia"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="12:00 PM • Table 2"
-                        android:textColor="@color/gray"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/cancelButton"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_cancel_circle"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="@color/my_primary"
-                    android:contentDescription="Cancel Reservation"/>
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/my_secondary"
-                android:layout_marginTop="0dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/sample_profile"
-                    android:scaleType="centerCrop"
-                    android:clipToOutline="true"
-                    android:contentDescription="Customer Avatar"
-                    android:background="@drawable/circle_bg"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="12dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Maria Garcia"
-                        android:textStyle="bold"
-                        android:textColor="@color/black"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="12:00 PM • Table 2"
-                        android:textColor="@color/gray"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-
-                <ImageButton
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_cancel_circle"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="@color/my_primary"
-                    android:contentDescription="Cancel Reservation"/>
-            </LinearLayout>
-
-
-        </LinearLayout>
-    </ScrollView>
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <!-- Bottom Navigation -->
     <include

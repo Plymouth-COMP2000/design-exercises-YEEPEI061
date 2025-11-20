@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,7 +16,7 @@ import java.util.Locale;
 public class ReservationDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "reservation.db";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 8;
 
     private static final String TABLE_RESERVATION = "reservations";
     private static final String COLUMN_ID = "id";
@@ -43,7 +42,7 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
                         COLUMN_GUEST_COUNT + " INTEGER," +
                         COLUMN_TABLE + " TEXT," +
                         COLUMN_REQUEST + " TEXT," +
-                        COLUMN_CUSTOMER_NAME + " TEXT" +   // <-- new column
+                        COLUMN_CUSTOMER_NAME + " TEXT" +
                         ")";
 
         db.execSQL(createTable);
@@ -58,9 +57,9 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void addSampleData(SQLiteDatabase db) {
-        insertSample(db, "Sat, 20 Dec", "7:00 PM", 4, "Table 5", "", "test");
-        insertSample(db, "Sat, 15 Jun", "8:00 PM", 2, "Table 3", "", "test");
-        insertSample(db, "Fri, 10 May", "6:30 PM", 4, "Table 5", "", "p");
+        insertSample(db, "Sat, 20 Dec", "7:00 PM", 4, "Table 5", "", "John Smith");
+        insertSample(db, "Sat, 15 Jun", "8:00 PM", 2, "Table 3", "", "John Smith");
+        insertSample(db, "Fri, 10 May", "6:30 PM", 4, "Table 5", "", "Ella Stewart");
     }
 
     private void insertSample(SQLiteDatabase db, String date, String time, int guest, String table, String request, String customerName) {
@@ -70,7 +69,7 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_GUEST_COUNT, guest);
         cv.put(COLUMN_TABLE, table);
         cv.put(COLUMN_REQUEST, request);
-        cv.put(COLUMN_CUSTOMER_NAME, customerName); // add customerName
+        cv.put(COLUMN_CUSTOMER_NAME, customerName);
         db.insert(TABLE_RESERVATION, null, cv);
     }
 
@@ -84,7 +83,7 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_GUEST_COUNT, guests);
         cv.put(COLUMN_TABLE, table);
         cv.put(COLUMN_REQUEST, request);
-        cv.put(COLUMN_CUSTOMER_NAME, customerName);  // <-- add name
+        cv.put(COLUMN_CUSTOMER_NAME, customerName);
 
         long result = db.insert(TABLE_RESERVATION, null, cv);
         return result != -1;
@@ -113,7 +112,7 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TABLE)),
                         status,
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_REQUEST)),
-                        customerName    // new field
+                        customerName
                 );
 
                 list.add(res);

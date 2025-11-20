@@ -60,6 +60,18 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String updatedUsername = prefs.getString("username", "");
+
+        TextView usernameText = findViewById(R.id.username);
+        usernameText.setText(updatedUsername);
+    }
+
+
     private void logoutUser() {
 
         SharedPreferences prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
