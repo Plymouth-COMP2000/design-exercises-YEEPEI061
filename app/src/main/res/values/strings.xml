@@ -5,12 +5,19 @@
     <string name="staff">Staff</string>
     <string name="guest">Guest</string>
     <string name="firstName">First Name</string>
+    <string name="firstNameRequired">First Name <font color="#FF0000">*</font></string>
     <string name="lastName">Last Name</string>
+    <string name="lastNameRequired">Last Name <font color="#FF0000">*</font></string>
     <string name="username">Username</string>
+    <string name="usernameRequired">Username <font color="#FF0000">*</font></string>
     <string name="password">Password</string>
+    <string name="passwordRequired">Password <font color="#FF0000">*</font></string>
     <string name="confirmPassword">Confirm Password</string>
+    <string name="confirmPasswordRequired">Confirm Password <font color="#FF0000">*</font></string>
     <string name="emailAddress">Email Address</string>
+    <string name="emailAddressRequired">Email Address <font color="#FF0000">*</font></string>
     <string name="contactNumber">Contact Number</string>
+    <string name="contactNumberRequired">Contact Number <font color="#FF0000">*</font></string>
     <string name="login">Login</string>
     <string name="signUp">Sign Up</string>
     <string name="createAccount">Create Account</string>

@@ -39,43 +39,54 @@ public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.V
     private List<Object> generateItemsWithHeaders(List<ReservationModel> reservations) {
         List<Object> result = new ArrayList<>();
 
-        // Sort reservations: Upcoming first
-        Collections.sort(reservations, (r1, r2) -> {
-            if (r1.getStatus().equals(r2.getStatus())) return 0;
-            return r1.getStatus().equals("Upcoming") ? -1 : 1;
-        });
+        Collections.sort(reservations, (r1, r2) -> r1.getStatus().equals(r2.getStatus()) ? 0 :
+                r1.getStatus().equals("Upcoming") ? -1 : 1);
+
+        // Upcoming
+        List<ReservationModel> upcoming = new ArrayList<>();
+        for (ReservationModel r : reservations) if (r.getStatus().equals("Upcoming")) upcoming.add(r);
 
         result.add("Upcoming");
-        boolean hasUpcoming = false;
-        for (ReservationModel res : reservations) {
-            if (res.getStatus().equals("Upcoming")) {
-                result.add(res);
-                hasUpcoming = true;
-            }
-        }
-        if (!hasUpcoming) {
-            result.add("No upcoming reservations");
+
+        if (!upcoming.isEmpty()) {
+            result.addAll(upcoming);
+        } else {
+            result.add(new EmptyReservationItem("Upcoming"));
         }
 
+        // Past
+        List<ReservationModel> past = new ArrayList<>();
+        for (ReservationModel r : reservations) if (r.getStatus().equals("Past")) past.add(r);
+
         result.add("Past");
-        boolean hasPast = false;
-        for (ReservationModel res : reservations) {
-            if (res.getStatus().equals("Past")) {
-                result.add(res);
-                hasPast = true;
-            }
-        }
-        if (!hasPast) {
-            result.add("No past reservations");
+
+        if (!past.isEmpty()) {
+            result.addAll(past);
+        } else {
+            result.add(new EmptyReservationItem("Past"));
         }
 
         return result;
     }
 
+
+    public class EmptyReservationItem {
+        private final String type;
+        public EmptyReservationItem(String type) { this.type = type; }
+        public String getType() { return type; }
+    }
+
+    private static final int VIEW_TYPE_EMPTY = 2;
+
     @Override
     public int getItemViewType(int position) {
-        return items.get(position) instanceof String ? VIEW_TYPE_HEADER : VIEW_TYPE_RESERVATION;
+        Object item = items.get(position);
+        if (item instanceof String) return VIEW_TYPE_HEADER;
+        if (item instanceof ReservationModel) return VIEW_TYPE_RESERVATION;
+        if (item instanceof EmptyReservationItem) return VIEW_TYPE_EMPTY;
+        return VIEW_TYPE_RESERVATION;
     }
+
 
     @NonNull
     @Override
@@ -83,6 +94,9 @@ public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (viewType == VIEW_TYPE_HEADER) {
             View view = LayoutInflater.from(context).inflate(R.layout.item_reservation_header, parent, false);
             return new HeaderViewHolder(view);
+        } else if (viewType == VIEW_TYPE_EMPTY) {
+            View view = LayoutInflater.from(context).inflate(R.layout.item_reservation_guest_empty, parent, false);
+            return new EmptyViewHolder(view);
         } else {
             View view = LayoutInflater.from(context).inflate(R.layout.item_reservation_guest, parent, false);
             return new ReservationViewHolder(view);
@@ -141,6 +155,13 @@ public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.V
             }
         }
     }
+
+    static class EmptyViewHolder extends RecyclerView.ViewHolder {
+        public EmptyViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+    }
+
 
     @Override
     public int getItemCount() {

@@ -190,7 +190,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/firstName"
+                        android:text="@string/firstNameRequired"
                         android:textSize="16sp"
                         android:textColor="@color/my_primary"
                         android:layout_marginBottom="4dp" />
@@ -221,7 +221,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/lastName"
+                        android:text="@string/lastNameRequired"
                         android:textSize="16sp"
                         android:textColor="@color/my_primary"
                         android:layout_marginBottom="4dp" />
@@ -255,7 +255,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/username"
+                    android:text="@string/usernameRequired"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
                     android:layout_marginBottom="4dp" />
@@ -288,7 +288,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/emailAddress"
+                    android:text="@string/emailAddressRequired"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
                     android:layout_marginBottom="4dp" />
@@ -321,7 +321,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/contactNumber"
+                    android:text="@string/contactNumberRequired"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
                     android:layout_marginBottom="4dp" />
@@ -354,7 +354,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/password"
+                    android:text="@string/passwordRequired"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
                     android:layout_marginBottom="4dp" />
@@ -405,7 +405,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/confirmPassword"
+                    android:text="@string/confirmPasswordRequired"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
                     android:layout_marginBottom="4dp" />

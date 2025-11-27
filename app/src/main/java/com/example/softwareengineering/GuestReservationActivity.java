@@ -97,13 +97,11 @@ public class GuestReservationActivity extends AppCompatActivity {
         refreshList();
     }
 
-    // Get the logged-in username from SharedPreferences
     private String getLoggedInUsername() {
         return getSharedPreferences("UserSession", MODE_PRIVATE)
                 .getString("username", "");
     }
 
-    // Refresh the reservation list for this user
     private void refreshList() {
         String username = getLoggedInUsername();
         List<ReservationModel> allReservations = dbHelper.getAllReservations();
@@ -127,7 +125,6 @@ public class GuestReservationActivity extends AppCompatActivity {
         sortReservations();
     }
 
-    // Filter reservations by customerName
     private List<ReservationModel> filterReservationsByUser(List<ReservationModel> list, String username) {
         List<ReservationModel> filtered = new ArrayList<>();
         for (ReservationModel r : list) {
@@ -138,11 +135,11 @@ public class GuestReservationActivity extends AppCompatActivity {
         return filtered;
     }
 
-    // Sort Upcoming first
     private void sortReservations() {
         Collections.sort(reservations, (r1, r2) -> {
             if (r1.getStatus().equals(r2.getStatus())) return 0;
             return r1.getStatus().equals("Upcoming") ? -1 : 1;
         });
     }
+
 }
