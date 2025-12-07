@@ -91,6 +91,7 @@
                         android:src="@drawable/ic_camera"
                         android:background="@drawable/circle_bg"
                         app:tint="@android:color/white"
+                        android:alpha="0.8"
                         android:contentDescription="@string/profilePicture"
                         android:elevation="4dp" />
                 </FrameLayout>

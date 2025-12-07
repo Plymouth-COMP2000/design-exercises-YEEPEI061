@@ -6,7 +6,10 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -114,25 +117,66 @@ public class EditProfileActivity extends AppCompatActivity {
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
+
+                    Log.d("PROFILE_DEBUG", "Gallery resultCode = " + result.getResultCode());
+
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+
                         Uri imageUri = result.getData().getData();
+                        Log.d("PROFILE_DEBUG", "Received URI = " + imageUri);
+
+                        if (imageUri == null) {
+                            Log.e("PROFILE_DEBUG", "imageUri is NULL");
+                            Toast.makeText(this, "Image URI is null", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
 
                         loadingOverlay.setVisibility(View.VISIBLE);
 
+                        InputStream inputStream = null;
+                        try {
+                            inputStream = getContentResolver().openInputStream(imageUri);
+                            Log.d("PROFILE_DEBUG", "InputStream opened = " + (inputStream != null));
+                        } catch (Exception e) {
+                            Log.e("PROFILE_DEBUG", "Error opening InputStream", e);
+                            Toast.makeText(this, "Error getting selected image", Toast.LENGTH_SHORT).show();
+                            loadingOverlay.setVisibility(View.GONE);
+                            return;
+                        }
+
+                        if (inputStream == null) {
+                            Log.e("PROFILE_DEBUG", "InputStream is NULL after openInputStream()");
+                            Toast.makeText(this, "Failed to read image", Toast.LENGTH_SHORT).show();
+                            loadingOverlay.setVisibility(View.GONE);
+                            return;
+                        }
+
+                        InputStream finalStream = inputStream;
+
                         new Thread(() -> {
-                            tempProfileImagePath = saveImageToInternalStorage(imageUri, "temp_" + USER_ID);
+                            Log.d("PROFILE_DEBUG", "Saving image in background...");
+                            tempProfileImagePath =
+                                    saveImageToInternalStorage(finalStream, "temp_" + USER_ID);
+
+                            Log.d("PROFILE_DEBUG", "Saved image path = " + tempProfileImagePath);
 
                             runOnUiThread(() -> {
                                 if (tempProfileImagePath != null) {
                                     setProfileImageFromFile(tempProfileImagePath);
+                                } else {
+                                    Toast.makeText(this, "Unable to load image", Toast.LENGTH_SHORT).show();
                                 }
                                 loadingOverlay.setVisibility(View.GONE);
                             });
                         }).start();
+                    } else {
+                        Log.e("PROFILE_DEBUG", "Gallery result NOT OK or data NULL");
                     }
                 }
         );
     }
+
+
 
     private void setProfileImageFromFile(String path) {
         Bitmap bitmap = BitmapFactory.decodeFile(path);
@@ -140,30 +184,52 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        galleryLauncher.launch(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+            galleryLauncher.launch(intent);
+        } else {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            galleryLauncher.launch(intent);
+        }
     }
 
-    private String saveImageToInternalStorage(Uri uri, String fileNamePrefix) {
+
+    private String saveImageToInternalStorage(InputStream inputStream, String fileNamePrefix) {
         try {
-            InputStream inputStream = getContentResolver().openInputStream(uri);
             String fileName = fileNamePrefix + ".jpg";
             File file = new File(getFilesDir(), fileName);
+
+            Log.d("PROFILE_DEBUG", "Saving to file = " + file.getAbsolutePath());
+
             FileOutputStream outputStream = new FileOutputStream(file);
             byte[] buffer = new byte[4096];
             int len;
+            int totalBytes = 0;
+
             while ((len = inputStream.read(buffer)) != -1) {
                 outputStream.write(buffer, 0, len);
+                totalBytes += len;
             }
+
+            Log.d("PROFILE_DEBUG", "Total bytes written = " + totalBytes);
+
             outputStream.close();
             inputStream.close();
+
+            if (totalBytes == 0) {
+                Log.e("PROFILE_DEBUG", "ZERO BYTES WRITTEN — image empty!");
+                return null;
+            }
+
             return file.getAbsolutePath();
+
         } catch (Exception e) {
-            Toast.makeText(this, "Unable to load image", Toast.LENGTH_SHORT).show();
+            Log.e("PROFILE_DEBUG", "saveImageToInternalStorage() ERROR", e);
             return null;
         }
     }
+
 
     private void fetchUserData() {
         loadingOverlay.setVisibility(View.VISIBLE);

@@ -67,9 +67,7 @@ public class ChooseProfileActivity extends AppCompatActivity {
         boyCard.setOnClickListener(v -> selectGender("boy"));
         girlCard.setOnClickListener(v -> selectGender("girl"));
 
-        // --------------------------
-        // GALLERY IMAGE PICK HANDLER
-        // --------------------------
+
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -146,24 +144,27 @@ public class ChooseProfileActivity extends AppCompatActivity {
     }
 
     private void openGallery() {
+        Intent intent;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            galleryLauncher.launch(intent);
+            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
         } else {
+            intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 101);
-            } else {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                galleryLauncher.launch(intent);
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        101
+                );
+                return;
             }
         }
+
+        galleryLauncher.launch(intent);
     }
 
-    // --------------------------
-    // SAVE PROFILE INFO
-    // --------------------------
     private void saveAndProceed() {
 
         SharedPreferences profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
@@ -204,9 +205,6 @@ public class ChooseProfileActivity extends AppCompatActivity {
         }).start();
     }
 
-    // --------------------------
-    // SAVE IMAGE INTO INTERNAL STORAGE
-    // --------------------------
     private String saveImageToInternalStorage(Uri uri, String fileNamePrefix) {
         try {
             InputStream inputStream = getContentResolver().openInputStream(uri);
