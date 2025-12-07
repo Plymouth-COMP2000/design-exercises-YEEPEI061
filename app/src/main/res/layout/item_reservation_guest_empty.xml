@@ -12,7 +12,7 @@
     <ImageView
         android:layout_width="54dp"
         android:layout_height="54dp"
-        android:src="@drawable/ic_reservation_outline"
+        android:src="@drawable/ic_event_busy"
         android:contentDescription="@string/reservations"
         android:backgroundTint="@color/my_tertiary"
         android:padding="8dp"

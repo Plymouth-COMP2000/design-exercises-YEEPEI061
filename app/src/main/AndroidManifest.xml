@@ -25,6 +25,7 @@
         </activity>
         <activity android:name=".LoginActivity" />
         <activity android:name=".SignUpActivity" />
+        <activity android:name=".ChooseProfileActivity" />
         <activity android:name=".EditProfileActivity" />
         <activity android:name=".GuestReservationFormActivity" />
         <activity android:name=".GuestReservationActivity" />

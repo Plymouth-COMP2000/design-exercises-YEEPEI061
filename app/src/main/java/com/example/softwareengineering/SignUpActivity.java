@@ -116,8 +116,15 @@ public class SignUpActivity extends AppCompatActivity {
                         jsonBody,
                         response -> {
                             loadingOverlay.setVisibility(View.GONE);
-                            Toast.makeText(SignUpActivity.this, "Account created! Please log in", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                            Toast.makeText(SignUpActivity.this, "Account created! Please choose your profile", Toast.LENGTH_SHORT).show();
+
+                            SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
+                            SharedPreferences.Editor editor = session.edit();
+                            editor.putString("username", username);
+                            editor.putString("role", selectedRole);
+                            editor.apply();
+
+                            startActivity(new Intent(SignUpActivity.this, ChooseProfileActivity.class));
                             finish();
                         },
                         error -> {

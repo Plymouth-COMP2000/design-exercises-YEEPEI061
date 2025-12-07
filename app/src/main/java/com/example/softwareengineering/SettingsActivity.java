@@ -3,22 +3,34 @@ package com.example.softwareengineering;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import java.io.File;
 import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity {
+
+    ImageView profileImage;
+
+    private String USER_ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        profileImage = findViewById(R.id.profileImage);
 
         LayoutBottomNav.setupBottomNav(this, findViewById(android.R.id.content));
         LayoutBottomNav.highlightSelected(this, findViewById(android.R.id.content), R.id.settingsSection);
@@ -69,7 +81,24 @@ public class SettingsActivity extends AppCompatActivity {
 
         TextView usernameText = findViewById(R.id.username);
         usernameText.setText(updatedUsername);
+
+        // Load profile image for the current user
+        SharedPreferences sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE);
+        SharedPreferences profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
+        USER_ID = sharedPref.getString("username", "");
+
+        String savedPath = profilePrefs.getString("profileImagePath_" + USER_ID, null);
+        if (savedPath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(savedPath);
+            if (bitmap != null) profileImage.setImageBitmap(bitmap);
+        } else {
+            String gender = profilePrefs.getString("profile", "boy");
+            profileImage.setImageResource(
+                    "boy".equals(gender) ? R.drawable.sample_profile_boy : R.drawable.sample_profile
+            );
+        }
     }
+
 
 
     private void logoutUser() {
