@@ -10,22 +10,10 @@ public class ReservationModel {
     private String status;
     private String specialRequest;
     private String customerName;
-    private boolean isPlaceholder;
+    private String guestId;
 
     public ReservationModel(int id, String date, String time, int guestCount,
-                            String tableName, String status, String specialRequest) {
-        this.id = id;
-        this.date = date;
-        this.time = time;
-        this.guestCount = guestCount;
-        this.tableName = tableName;
-        this.status = status;
-        this.specialRequest = specialRequest;
-        this.customerName = ""; // default empty
-    }
-
-    public ReservationModel(int id, String date, String time, int guestCount,
-                            String tableName, String status, String specialRequest, String customerName) {
+                            String tableName, String status, String specialRequest, String customerName, String guestId) {
         this.id = id;
         this.date = date;
         this.time = time;
@@ -34,27 +22,11 @@ public class ReservationModel {
         this.status = status;
         this.specialRequest = specialRequest;
         this.customerName = customerName;
-    }
-
-    // Placeholder constructor
-    public ReservationModel(String date, String time, int guestCount,
-                            String tableName, String status, boolean isPlaceholder) {
-        this.date = date;
-        this.time = time;
-        this.guestCount = guestCount;
-        this.tableName = tableName;
-        this.status = status;
-        this.isPlaceholder = isPlaceholder;
-        this.customerName = "";
+        this.guestId = guestId;
     }
 
     public String getCustomerName() {
         return customerName;
-    }
-
-
-    public boolean isPlaceholder() {
-        return isPlaceholder;
     }
 
     public int getId() {
@@ -89,4 +61,5 @@ public class ReservationModel {
         return specialRequest;
     }
 
+    public String getGuestId() { return guestId; }
 }

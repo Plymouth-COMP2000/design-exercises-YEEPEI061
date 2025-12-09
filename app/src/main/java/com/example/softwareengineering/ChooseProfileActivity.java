@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -19,11 +18,15 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,7 +39,8 @@ public class ChooseProfileActivity extends AppCompatActivity {
     private LinearLayout profileSelector, uploadedImageContainer;
 
     private Button uploadImageButton, confirmButton, skipButton;
-
+    private static final String BASE_URL = "http://10.240.72.69/comp2000/coursework/";
+    private static final String STUDENT_ID = "bsse2506028";
     private Uri uploadedImageUri = null;
     private String selectedGender = null;
     private FrameLayout loadingOverlay;
@@ -107,8 +111,6 @@ public class ChooseProfileActivity extends AppCompatActivity {
 
                         }).start();
                     }
-
-
                 }
         );
 
@@ -166,7 +168,6 @@ public class ChooseProfileActivity extends AppCompatActivity {
     }
 
     private void saveAndProceed() {
-
         SharedPreferences profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
         SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
         String username = session.getString("username", null);
@@ -176,33 +177,51 @@ public class ChooseProfileActivity extends AppCompatActivity {
             return;
         }
 
-        if (uploadedImageUri == null && selectedGender == null) {
-            Toast.makeText(this, "Please choose a profile.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        String url = BASE_URL + "read_user/" + STUDENT_ID + "/" + username;
 
         loadingOverlay.setVisibility(View.VISIBLE);
 
-        new Thread(() -> {
-            SharedPreferences.Editor editor = profilePrefs.edit();
+        JsonObjectRequest request = new JsonObjectRequest(
+                com.android.volley.Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        if (response.has("user")) {
+                            JSONObject user = response.getJSONObject("user");
+                            String userId = user.getString("_id");
 
-            if (uploadedImageUri != null) {
-                String filePath = saveImageToInternalStorage(uploadedImageUri, "profile_" + username);
-                editor.putString("profileImagePath_" + username, filePath);
-            } else {
-                editor.putString("profileGender_" + username, selectedGender);
-            }
+                            SharedPreferences.Editor sessionEditor = session.edit();
+                            sessionEditor.putString("userId", userId);
+                            sessionEditor.apply();
 
-            editor.apply();
+                            SharedPreferences.Editor profileEditor = profilePrefs.edit();
 
-            runOnUiThread(() -> {
-                loadingOverlay.setVisibility(View.GONE);
-                Toast.makeText(ChooseProfileActivity.this, "Profile set! Please login now.", Toast.LENGTH_SHORT).show();
+                            if (uploadedImageUri != null) {
+                                String filePath = saveImageToInternalStorage(uploadedImageUri, "profile_" + userId);
+                                profileEditor.putString("profileImagePath_" + userId, filePath);
+                            } else if (selectedGender != null) {
+                                profileEditor.putString("profileGender_" + userId, selectedGender);
+                            }
 
-                startActivity(new Intent(ChooseProfileActivity.this, LoginActivity.class));
-                finish();
-            });
-        }).start();
+                            profileEditor.apply();
+
+                            Toast.makeText(this, "Profile set! Please login now.", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(ChooseProfileActivity.this, LoginActivity.class));
+                            finish();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        loadingOverlay.setVisibility(View.GONE);
+                    }
+                },
+                error -> {
+                    Toast.makeText(this, "Failed to fetch user info", Toast.LENGTH_SHORT).show();
+                    loadingOverlay.setVisibility(View.GONE);
+                }
+        );
+
+        Volley.newRequestQueue(this).add(request);
     }
 
     private String saveImageToInternalStorage(Uri uri, String fileNamePrefix) {

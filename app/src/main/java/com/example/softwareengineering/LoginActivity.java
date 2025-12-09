@@ -44,14 +44,12 @@ public class LoginActivity extends AppCompatActivity {
         staffRole.setOnClickListener(v -> selectRole(true));
         guestRole.setOnClickListener(v -> selectRole(false));
 
-        // Toggle password
         passwordInput = findViewById(R.id.passwordInput);
         togglePassword = findViewById(R.id.togglePassword);
 
         togglePassword.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
                 case android.view.MotionEvent.ACTION_DOWN:
-                    // Show password
                     passwordInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
                             android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
                     togglePassword.setImageResource(R.drawable.ic_visibility);
@@ -61,7 +59,6 @@ public class LoginActivity extends AppCompatActivity {
 
                 case android.view.MotionEvent.ACTION_UP:
                 case android.view.MotionEvent.ACTION_CANCEL:
-                    // Hide password again
                     passwordInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT |
                             android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     togglePassword.setImageResource(R.drawable.ic_visibility_off);
@@ -104,6 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                                 JSONObject user = response.getJSONObject("user");
                                 String correctPassword = user.getString("password");
                                 String usertype = user.getString("usertype");
+                                String userId = user.getString("_id");
 
                                 if (!password.equals(correctPassword)) {
                                     Toast.makeText(LoginActivity.this, "Incorrect password", Toast.LENGTH_SHORT).show();
@@ -118,10 +116,10 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
 
                                 if (selectedRole.equals("staff")) {
-                                    saveUserSession(username);
+                                    saveUserSession(userId,username);
                                     startActivity(new Intent(LoginActivity.this, StaffMenuActivity.class));
                                 } else {
-                                    saveUserSession(username);
+                                    saveUserSession(userId,username);
                                     startActivity(new Intent(LoginActivity.this, GuestMenuActivity.class));
                                 }
 
@@ -184,9 +182,10 @@ public class LoginActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    private void saveUserSession(String username) {
+    private void saveUserSession(String userId, String username) {
         getSharedPreferences("UserSession", MODE_PRIVATE)
                 .edit()
+                .putString("userId", userId)
                 .putString("username", username)
                 .apply();
     }

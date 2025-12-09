@@ -82,10 +82,9 @@ public class SettingsActivity extends AppCompatActivity {
         TextView usernameText = findViewById(R.id.username);
         usernameText.setText(updatedUsername);
 
-        // Load profile image for the current user
         SharedPreferences sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE);
         SharedPreferences profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
-        USER_ID = sharedPref.getString("username", "");
+        USER_ID = sharedPref.getString("userId", "");
 
         String savedPath = profilePrefs.getString("profileImagePath_" + USER_ID, null);
         if (savedPath != null) {

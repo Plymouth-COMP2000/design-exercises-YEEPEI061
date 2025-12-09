@@ -1,6 +1,7 @@
 package com.example.softwareengineering;
 
 import android.app.DatePickerDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -17,6 +18,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
 
 public class StaffReservationActivity extends AppCompatActivity {
 
@@ -197,9 +201,45 @@ public class StaffReservationActivity extends AppCompatActivity {
         adapter.updateList(reservations);
     }
 
+
     private void cancelReservation(ReservationModel reservation) {
         dbHelper.deleteReservation(reservation.getId());
-        Toast.makeText(this, "Reservation cancelled successfully!", Toast.LENGTH_SHORT).show();
         loadReservations();
+
+        long currentTime = System.currentTimeMillis();
+
+        String guestId = reservation.getGuestId();
+
+        if (guestId == null || guestId.isEmpty()) {
+            Toast.makeText(this, "Failed to notify guest: invalid guest ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        SharedPreferences guestSp = getSharedPreferences("Notifications_" + guestId, MODE_PRIVATE);
+        String guestJson = guestSp.getString("list", "[]");
+
+        Type type = new TypeToken<List<NotificationModel>>() {}.getType();
+        List<NotificationModel> guestList = new Gson().fromJson(guestJson, type);
+
+        if (guestList == null) {
+            guestList = new ArrayList<>();
+        }
+
+        NotificationModel guestNotif = new NotificationModel(
+                "Reservation Cancelled",
+                "Your reservation for " + reservation.getDate() + " at " + reservation.getTime() +
+                        " has been cancelled by staff.",
+                currentTime,
+                true,
+                R.drawable.ic_cancel_circle,
+                getResources().getColor(R.color.my_danger, null),
+                getResources().getColor(R.color.soft_red, null)
+        );
+
+        guestList.add(0, guestNotif);
+        guestSp.edit().putString("list", new Gson().toJson(guestList)).apply();
+
+        Toast.makeText(this, "Reservation cancelled successfully!", Toast.LENGTH_SHORT).show();
     }
+
 }

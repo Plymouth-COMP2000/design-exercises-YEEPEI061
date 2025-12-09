@@ -1,5 +1,6 @@
 package com.example.softwareengineering;
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -16,7 +17,7 @@ import java.util.Locale;
 public class ReservationDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "reservation.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
 
     private static final String TABLE_RESERVATION = "reservations";
     private static final String COLUMN_ID = "id";
@@ -26,9 +27,13 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_TABLE = "tableName";
     private static final String COLUMN_REQUEST = "specialRequest";
     private static final String COLUMN_CUSTOMER_NAME= "customerName";
+    private static final String COLUMN_CUSTOMER_USER_ID = "customerUserId";
+
+    private Context context;
 
     public ReservationDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     @Override
@@ -42,11 +47,12 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
                         COLUMN_GUEST_COUNT + " INTEGER," +
                         COLUMN_TABLE + " TEXT," +
                         COLUMN_REQUEST + " TEXT," +
-                        COLUMN_CUSTOMER_NAME + " TEXT" +
+                        COLUMN_CUSTOMER_NAME + " TEXT," +
+                        COLUMN_CUSTOMER_USER_ID + " TEXT" +
                         ")";
 
         db.execSQL(createTable);
-        addSampleData(db);
+//        addSampleData(db);
     }
 
 
@@ -56,25 +62,7 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    private void addSampleData(SQLiteDatabase db) {
-        insertSample(db, "Sat, 20 Dec", "7:00 PM", 4, "Table 5", "", "John Smith");
-        insertSample(db, "Sat, 15 Jun", "8:00 PM", 2, "Table 3", "", "John Smith");
-        insertSample(db, "Fri, 10 May", "6:30 PM", 4, "Table 5", "", "Ella Stewart");
-    }
-
-    private void insertSample(SQLiteDatabase db, String date, String time, int guest, String table, String request, String customerName) {
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_DATE, date);
-        cv.put(COLUMN_TIME, time);
-        cv.put(COLUMN_GUEST_COUNT, guest);
-        cv.put(COLUMN_TABLE, table);
-        cv.put(COLUMN_REQUEST, request);
-        cv.put(COLUMN_CUSTOMER_NAME, customerName);
-        db.insert(TABLE_RESERVATION, null, cv);
-    }
-
-
-    public boolean addReservation(String date, String time, int guests, String request, String table, String customerName) {
+    public boolean addReservation(String date, String time, int guests, String request, String table, String customerName, String userId) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -84,11 +72,11 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_TABLE, table);
         cv.put(COLUMN_REQUEST, request);
         cv.put(COLUMN_CUSTOMER_NAME, customerName);
+        cv.put(COLUMN_CUSTOMER_USER_ID, userId);
 
         long result = db.insert(TABLE_RESERVATION, null, cv);
         return result != -1;
     }
-
 
     public List<ReservationModel> getAllReservations() {
         List<ReservationModel> list = new ArrayList<>();
@@ -102,7 +90,8 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
                 String time = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TIME));
                 String status = calculateStatus(date, time);
 
-                String customerName = cursor.getString(cursor.getColumnIndexOrThrow("customerName")); // new
+                String customerName = cursor.getString(cursor.getColumnIndexOrThrow("customerName"));
+                String userId = cursor.getString(cursor.getColumnIndexOrThrow("customerUserId"));
 
                 ReservationModel res = new ReservationModel(
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
@@ -112,7 +101,8 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TABLE)),
                         status,
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_REQUEST)),
-                        customerName
+                        customerName,
+                        userId
                 );
 
                 list.add(res);
@@ -123,6 +113,7 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return list;
     }
+
 
 
     public void deleteReservation(int id) {

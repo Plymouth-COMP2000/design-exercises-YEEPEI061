@@ -38,7 +38,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private static final String BASE_URL = "http://10.240.72.69/comp2000/coursework/";
     private static final String STUDENT_ID = "bsse2506028";
 
-    private String USER_ID;
+    private String userId, username;
     private String actualPassword;
 
     private EditText passwordInput, confirmPasswordInput, firstNameInput, lastNameInput,
@@ -65,13 +65,14 @@ public class EditProfileActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE);
         profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
 
-        USER_ID = sharedPref.getString("username", "");
-        if (USER_ID.isEmpty()) {
+        userId = sharedPref.getString("userId", "");
+        username = sharedPref.getString("username", "");
+        if (userId.isEmpty()) {
             Toast.makeText(this, "No logged-in user found", Toast.LENGTH_SHORT).show();
             finish();
         }
 
-        String savedPath = profilePrefs.getString("profileImagePath_" + USER_ID, null);
+        String savedPath = profilePrefs.getString("profileImagePath_" + userId, null);
         if (savedPath != null) {
             setProfileImageFromFile(savedPath);
         } else {
@@ -156,7 +157,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         new Thread(() -> {
                             Log.d("PROFILE_DEBUG", "Saving image in background...");
                             tempProfileImagePath =
-                                    saveImageToInternalStorage(finalStream, "temp_" + USER_ID);
+                                    saveImageToInternalStorage(finalStream, "temp_" + userId);
 
                             Log.d("PROFILE_DEBUG", "Saved image path = " + tempProfileImagePath);
 
@@ -233,7 +234,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void fetchUserData() {
         loadingOverlay.setVisibility(View.VISIBLE);
-        String url = BASE_URL + "read_user/" + STUDENT_ID + "/" + USER_ID;
+        String url = BASE_URL + "read_user/" + STUDENT_ID + "/" + username;
 
         JsonObjectRequest getRequest = new JsonObjectRequest(
                 Request.Method.GET,
@@ -272,7 +273,7 @@ public class EditProfileActivity extends AppCompatActivity {
         String contact = contactInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
         String confirmPassword = confirmPasswordInput.getText().toString().trim();
-        String oldUsername = USER_ID;
+        String oldUsername = username;
 
         if (!password.isEmpty() && !password.equals(confirmPassword)) {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
@@ -294,9 +295,7 @@ public class EditProfileActivity extends AppCompatActivity {
             String usertype = prefs.getString("role", null);
             if (usertype != null) jsonBody.put("usertype", usertype);
 
-            String url = BASE_URL + "update_user/" + STUDENT_ID + "/" + USER_ID;
-
-            boolean usernameChanged = !newUsername.equals(oldUsername);
+            String url = BASE_URL + "update_user/" + STUDENT_ID + "/" + username;
 
             JsonObjectRequest putRequest = new JsonObjectRequest(
                     Request.Method.PUT,
@@ -307,25 +306,11 @@ public class EditProfileActivity extends AppCompatActivity {
                         sessionEditor.putString("username", newUsername);
                         sessionEditor.apply();
 
-                        // Only now save temp image to ProfilePrefs
                         SharedPreferences.Editor profileEditor = profilePrefs.edit();
 
-                        // If username changed → move old image key to new username key
-                        if (usernameChanged) {
-                            String oldKey = "profileImagePath_" + oldUsername;
-                            String newKey = "profileImagePath_" + newUsername;
-
-                            // If user already had a saved image before editing username
-                            String oldImagePath = profilePrefs.getString(oldKey, null);
-                            if (oldImagePath != null) {
-                                profileEditor.putString(newKey, oldImagePath);
-                                profileEditor.remove(oldKey);
-                            }
-                        }
-
-                        // If user uploaded a new image during editing
                         if (tempProfileImagePath != null) {
-                            profileEditor.putString("profileImagePath_" + newUsername, tempProfileImagePath);
+                            profileEditor.putString("profileImagePath_" + userId, tempProfileImagePath);
+                            profileEditor.apply();
                         }
 
                         profileEditor.apply();
@@ -347,7 +332,6 @@ public class EditProfileActivity extends AppCompatActivity {
             loadingOverlay.setVisibility(View.GONE);
         }
     }
-
 
     @SuppressLint("ClickableViewAccessibility")
     private void setupPasswordToggle(EditText inputField, ImageView toggleIcon) {

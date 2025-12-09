@@ -118,7 +118,7 @@ public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.V
                 ((HeaderViewHolder) holder).headerText.setTextSize(15f);
             } else {
                 ((HeaderViewHolder) holder).headerText.setTextColor(
-                        context.getResources().getColor(R.color.my_primary)
+                        context.getResources().getColor(R.color.black)
                 );
             }
 

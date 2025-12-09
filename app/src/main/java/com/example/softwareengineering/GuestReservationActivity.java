@@ -1,15 +1,30 @@
 package com.example.softwareengineering;
 
+import android.Manifest;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,13 +34,15 @@ public class GuestReservationActivity extends AppCompatActivity {
     private ReservationDatabaseHelper dbHelper;
     private GuestReservationAdapter adapter;
     private List<ReservationModel> reservations;
+    private static final String CHANNEL_ID = "reservation_channel";
+    private static final int REQ_POST_NOTIF = 101;
+    private NotificationModel pendingNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guest_reservation);
 
-        // Setup bottom navigation (if used)
         LayoutBottomNav.setupBottomNav(this, findViewById(android.R.id.content));
         LayoutBottomNav.highlightSelected(this, findViewById(android.R.id.content), R.id.reservationsSection);
 
@@ -34,7 +51,6 @@ public class GuestReservationActivity extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.recyclerReservations);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // Load reservations
         refreshList();
 
         adapter = new GuestReservationAdapter(this, reservations, new GuestReservationAdapter.OnReservationClickListener() {
@@ -49,10 +65,43 @@ public class GuestReservationActivity extends AppCompatActivity {
                         () -> {
                             dbHelper.deleteReservation(reservation.getId());
                             refreshList();
+
+                            long currentTime = System.currentTimeMillis();
+
+                            NotificationModel notif = new NotificationModel(
+                                    "Reservation Cancelled",
+                                    "You have cancelled your reservation for " +
+                                            reservation.getDate() + " at " + reservation.getTime() + ".",
+                                    currentTime,
+                                    true,
+                                    R.drawable.ic_cancel_circle,
+                                    getResources().getColor(R.color.my_danger, null),
+                                    getResources().getColor(R.color.soft_red, null)
+                            );
+                            addNotification(notif);
+                            checkPermissionAndNotify(notif);
+
+                            SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
+                            String username = userSession.getString("username", "Guest");
+
+                            String staffMessage = username + " cancelled their reservation for " +
+                                    reservation.getDate() + " at " + reservation.getTime() + ".";
+                            NotificationModel staffNotif = new NotificationModel(
+                                    "Reservation Cancelled",
+                                    staffMessage,
+                                    currentTime,
+                                    true,
+                                    R.drawable.ic_cancel_circle,
+                                    getResources().getColor(R.color.my_danger, null),
+                                    getResources().getColor(R.color.soft_red, null)
+                            );
+                            addNotificationForStaff(staffNotif);
+
                             Toast.makeText(GuestReservationActivity.this, "Reservation cancelled successfully!", Toast.LENGTH_SHORT).show();
                         }
                 );
             }
+
 
             @Override
             public void onEditClick(ReservationModel reservation) {
@@ -106,7 +155,6 @@ public class GuestReservationActivity extends AppCompatActivity {
         String username = getLoggedInUsername();
         List<ReservationModel> allReservations = dbHelper.getAllReservations();
 
-        // Filter reservations belonging to the logged-in user
         reservations = filterReservationsByUser(allReservations, username);
 
         if (adapter != null) {
@@ -141,5 +189,100 @@ public class GuestReservationActivity extends AppCompatActivity {
             return r1.getStatus().equals("Upcoming") ? -1 : 1;
         });
     }
+
+    private void addNotification(NotificationModel notification) {
+        SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userId = userSession.getString("userId", "");
+
+        SharedPreferences sp = getSharedPreferences("Notifications_" + userId, MODE_PRIVATE); // separate by user
+        String json = sp.getString("list", "[]");
+
+        Type type = new TypeToken<List<NotificationModel>>() {}.getType();
+        List<NotificationModel> notifications = new Gson().fromJson(json, type);
+
+        notifications.add(0, notification);
+        sp.edit().putString("list", new Gson().toJson(notifications)).apply();
+    }
+
+    private void checkPermissionAndNotify(NotificationModel notif) {
+        Log.d("NotifDebug", "Permission granted, showing notification");
+
+        pendingNotification = notif;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQ_POST_NOTIF
+                );
+            } else {
+                showNotification(notif);
+            }
+        } else {
+            showNotification(notif);
+        }
+    }
+
+    private void showNotification(NotificationModel notif) {
+        Log.d("NotifDebug", "showNotification called with title: " + notif.getTitle());
+        Intent intent = new Intent(this, NotificationActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                        PendingIntent.FLAG_MUTABLE :
+                        PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setSmallIcon(android.R.drawable.ic_dialog_info)
+                        .setContentTitle(notif.getTitle())
+                        .setContentText(notif.getMessage())
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setDefaults(NotificationCompat.DEFAULT_ALL);
+
+
+        NotificationManager manager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        manager.notify((int) System.currentTimeMillis(), builder.build());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQ_POST_NOTIF) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showNotification(pendingNotification);
+                pendingNotification = null;
+            } else {
+                Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void addNotificationForStaff(NotificationModel notif) {
+        SharedPreferences sp = getSharedPreferences("Notifications_staff", MODE_PRIVATE);
+        String json = sp.getString("list", "[]");
+
+        Type type = new TypeToken<List<NotificationModel>>() {}.getType();
+        List<NotificationModel> staffList = new Gson().fromJson(json, type);
+
+        staffList.add(0, notif); // add at top
+        sp.edit().putString("list", new Gson().toJson(staffList)).apply();
+    }
+
 
 }

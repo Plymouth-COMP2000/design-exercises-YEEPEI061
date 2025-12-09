@@ -1,8 +1,15 @@
 package com.example.softwareengineering;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,11 +23,21 @@ import android.widget.Toast;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GuestReservationFormActivity extends AppCompatActivity {
@@ -33,7 +50,11 @@ public class GuestReservationFormActivity extends AppCompatActivity {
     private Button cancelReservationButton;
     private int reservationId = -1;
     private String mode;
-
+    private static final String CHANNEL_ID = "reservation_channel";
+    private static final int REQ_POST_NOTIF = 101;
+    private NotificationModel pendingNotification;
+    private static final String BASE_URL = "http://10.240.72.69/comp2000/coursework/";
+    private static final String STUDENT_ID = "bsse2506028";
 
     // Table selection
     private enum TableStatus {AVAILABLE, OCCUPIED, SELECTED}
@@ -80,6 +101,9 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         if ("edit".equals(mode) || "bookAgain".equals(mode)) {
             dateInput.setText(intent.getStringExtra("date"));
             timeInput.setText(intent.getStringExtra("time"));
+            final String oldDate = intent.getStringExtra("date");
+            final String oldTime = intent.getStringExtra("time");
+
             guestCountInput.setText(String.valueOf(intent.getIntExtra("guestCount", 1)));
             requestInput.setText(intent.getStringExtra("specialRequest"));
 
@@ -105,6 +129,9 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                 saveButton.setOnClickListener(v -> saveReservation());
 
                 cancelReservationButton.setOnClickListener(v -> {
+                    SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
+                    String username = userSession.getString("username", "");
+
                     PopupHelper.showPopup(
                             this,
                             R.drawable.ic_cancel_circle,
@@ -115,6 +142,34 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                                 ReservationDatabaseHelper dbHelper = new ReservationDatabaseHelper(this);
                                 dbHelper.deleteReservation(reservationId);
                                 dbHelper.close();
+
+                                long currentTime = System.currentTimeMillis();
+
+                                NotificationModel notif = new NotificationModel(
+                                        "Reservation Cancelled",
+                                        "You have successfully cancelled your reservation for " + oldDate + " at " + oldTime + ".",
+                                        currentTime,
+                                        true,
+                                        R.drawable.ic_cancel_circle,
+                                        getResources().getColor(R.color.my_danger, null),
+                                        getResources().getColor(R.color.soft_red, null)
+                                );
+
+                                addNotification(notif);
+                                checkPermissionAndNotify(notif);
+
+                                String staffMessage = username + " cancelled their reservation for " + oldDate + " at " + oldTime + ".";
+                                NotificationModel staffNotif = new NotificationModel(
+                                        "Reservation Cancelled",
+                                        staffMessage,
+                                        currentTime,
+                                        true,
+                                        R.drawable.ic_cancel_circle,
+                                        getResources().getColor(R.color.my_danger, null),
+                                        getResources().getColor(R.color.soft_red, null)
+                                );
+
+                                addNotificationForStaff(staffNotif);
 
                                 Toast.makeText(this, "Reservation cancelled successfully!", Toast.LENGTH_SHORT).show();
 
@@ -168,17 +223,42 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         }
     }
 
+
     private void checkFields() {
         boolean allFilled = !dateInput.getText().toString().trim().isEmpty()
                 && !timeInput.getText().toString().trim().isEmpty()
                 && !guestCountInput.getText().toString().trim().isEmpty()
                 && selectedTable != null;
 
-        saveButton.setEnabled(allFilled);
+
+        boolean dateValid = true;
+
+        if (allFilled) {
+            try {
+                String dateStr = dateInput.getText().toString().trim();
+                String timeStr = timeInput.getText().toString().trim();
+                int year = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+                String fullDateStr = dateStr + " " + year + " " + timeStr;
+
+                SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm a");
+                sdf.setLenient(false);
+                Date selectedDate = sdf.parse(fullDateStr);
+                dateValid = !selectedDate.before(new Date());
+
+
+            } catch (Exception e) {
+                dateValid = false;
+            }
+        }
+
+        boolean canSave = allFilled && dateValid;
+
+        saveButton.setEnabled(canSave);
         saveButton.setBackgroundTintList(ContextCompat.getColorStateList(
-                this, allFilled ? R.color.my_primary : R.color.my_secondary
+                this, canSave ? R.color.my_primary : R.color.my_secondary
         ));
     }
+
 
     private void showDatePicker() {
         final Calendar calendar = Calendar.getInstance();
@@ -279,9 +359,9 @@ public class GuestReservationFormActivity extends AppCompatActivity {
             return;
         }
 
-        String username = getSharedPreferences("UserSession", MODE_PRIVATE)
-                .getString("username", "");
-
+        SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String username = userSession.getString("username", "");
+        String userId = userSession.getString("userId", "");
 
         String tableName = "Table " + getResources()
                 .getResourceEntryName(selectedTable.getId())
@@ -313,16 +393,52 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                 message,
                 () -> {
                     boolean success;
-                    if ("edit".equals(mode)) {
+                    boolean isEdit = "edit".equals(mode);
+
+                    if (isEdit) {
                         success = db.updateReservation(reservationId, date, time, guests, request, tableName, username);
                     } else {
-                        success = db.addReservation(date, time, guests, request, tableName, username);
+                        success = db.addReservation(date, time, guests, request, tableName, username, userId);
                     }
 
                     if (success) {
                         Toast.makeText(this,
-                                "Reservation " + ("edit".equals(mode) ? "updated" : "booked") + " successfully!",
+                                "Reservation " + (isEdit ? "updated" : "booked") + " successfully!",
                                 Toast.LENGTH_SHORT).show();
+
+                        long currentTime = System.currentTimeMillis();
+
+                        NotificationModel guestNotif = new NotificationModel(
+                                isEdit ? "Reservation Modified" : "Reservation Successful",
+                                isEdit ?
+                                        "Your reservation has been successfully changed to " + guests + " people at " + time + "." :
+                                        "Your reservation for " + guests + " people on " + date + " at " + time + " is successfully reserved.",
+                                currentTime,
+                                true,
+                                isEdit ? R.drawable.ic_modify : R.drawable.ic_check_circle,
+                                isEdit ? getResources().getColor(R.color.my_primary, null) : getResources().getColor(R.color.green, null),
+                                isEdit ? getResources().getColor(R.color.my_light_secondary, null) : getResources().getColor(R.color.soft_green, null)
+                        );
+
+                        addNotification(guestNotif);
+                        checkPermissionAndNotify(guestNotif);
+
+                        String staffMessage = isEdit ?
+                                username + " updated a reservation for " + guests + " people at " + time + " on " + date + "." :
+                                username + " booked a reservation for " + guests + " people at " + time + " on " + date + ".";
+
+                        NotificationModel staffNotif = new NotificationModel(
+                                isEdit ? "Reservation Updated" : "New Reservation",
+                                staffMessage,
+                                currentTime,
+                                true,
+                                isEdit ? R.drawable.ic_modify : R.drawable.ic_restaurant,
+                                isEdit ? getResources().getColor(R.color.my_primary, null) : getResources().getColor(R.color.green, null),
+                                isEdit ? getResources().getColor(R.color.my_light_secondary, null) : getResources().getColor(R.color.soft_green, null)
+                        );
+
+                        addNotificationForStaff(staffNotif);
+
                         db.close();
                         setResult(RESULT_OK);
                         finish();
@@ -334,6 +450,97 @@ public class GuestReservationFormActivity extends AppCompatActivity {
 
     }
 
+    private void addNotification(NotificationModel notification) {
+        SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userId = userSession.getString("userId", "");
+
+        SharedPreferences sp = getSharedPreferences("Notifications_" + userId, MODE_PRIVATE); // separate by user
+        String json = sp.getString("list", "[]");
+
+        Type type = new TypeToken<List<NotificationModel>>() {}.getType();
+        List<NotificationModel> notifications = new Gson().fromJson(json, type);
+
+        notifications.add(0, notification);
+        sp.edit().putString("list", new Gson().toJson(notifications)).apply();
+    }
+
+    private void checkPermissionAndNotify(NotificationModel notif) {
+
+        pendingNotification = notif;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        REQ_POST_NOTIF
+                );
+            } else {
+                showNotification(notif);
+            }
+        } else {
+            showNotification(notif);
+        }
+    }
+
+    private void showNotification(NotificationModel notif) {
+        Intent intent = new Intent(this, NotificationActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ?
+                        PendingIntent.FLAG_MUTABLE :
+                        PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setSmallIcon(android.R.drawable.ic_dialog_info)
+                        .setContentTitle(notif.getTitle())
+                        .setContentText(notif.getMessage())
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH)
+                        .setDefaults(NotificationCompat.DEFAULT_ALL);
+
+
+        NotificationManager manager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        manager.notify((int) System.currentTimeMillis(), builder.build());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQ_POST_NOTIF) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showNotification(pendingNotification);
+                pendingNotification = null;
+            } else {
+                Toast.makeText(this, "Notification permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private void addNotificationForStaff(NotificationModel notif) {
+        SharedPreferences sp = getSharedPreferences("Notifications_staff", MODE_PRIVATE);
+        String json = sp.getString("list", "[]");
+
+        Type type = new TypeToken<List<NotificationModel>>() {}.getType();
+        List<NotificationModel> staffList = new Gson().fromJson(json, type);
+
+        staffList.add(0, notif);
+        sp.edit().putString("list", new Gson().toJson(staffList)).apply();
+    }
 
 
 }
