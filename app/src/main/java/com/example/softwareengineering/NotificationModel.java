@@ -51,4 +51,17 @@ public class NotificationModel {
     public int getIconBgColor() {
         return iconBgColor;
     }
+
+    public boolean isNewReservation() {
+        return title.equals("New Reservation");
+    }
+
+    public boolean isUpdateReservation() {
+        return title.equals("Reservation Updated");
+    }
+
+    public boolean isCancelReservation() {
+        return title.equals("Reservation Cancelled");
+    }
+
 }

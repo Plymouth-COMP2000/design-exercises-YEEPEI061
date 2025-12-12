@@ -5,19 +5,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-
-import java.io.File;
-import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -40,11 +36,46 @@ public class SettingsActivity extends AppCompatActivity {
         TextView prefTwo = findViewById(R.id.prefTwo);
         TextView prefThree = findViewById(R.id.prefThree);
 
-        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
-        String username = prefs.getString("username", "");
-        String role = prefs.getString("role", "");
+        SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String username = userSession.getString("username", "");
+        String role = userSession.getString("role", "");
+        String userId = userSession.getString("userId", "");
 
         usernameText.setText(username);
+
+        Switch switchNew = findViewById(R.id.switchNew);
+        Switch switchUpdate = findViewById(R.id.switchUpdate);
+        Switch switchCancel = findViewById(R.id.switchCancel);
+
+        String prefName;
+        if ("staff".equalsIgnoreCase(role)) {
+            prefName = "NotificationPrefs_staff_" + userId; // note staff_
+        } else {
+            prefName = "NotificationPrefs_" + userId;
+        }
+
+        SharedPreferences prefs = getSharedPreferences(prefName, MODE_PRIVATE);
+
+        switchNew.setChecked(prefs.getBoolean("notif_new", true));
+        switchUpdate.setChecked(prefs.getBoolean("notif_update", true));
+        switchCancel.setChecked(prefs.getBoolean("notif_cancel", true));
+
+
+        switchNew.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            saveSwitchTimestamp("notif_new", isChecked);
+            prefs.edit().putBoolean("notif_new", isChecked).apply();
+        });
+
+        switchUpdate.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            saveSwitchTimestamp("notif_update", isChecked);
+            prefs.edit().putBoolean("notif_update", isChecked).apply();
+        });
+
+        switchCancel.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            saveSwitchTimestamp("notif_cancel", isChecked);
+            prefs.edit().putBoolean("notif_cancel", isChecked).apply();
+        });
+
 
         if ("staff".equals(role)) {
             prefOne.setText("New Reservations");
@@ -99,7 +130,6 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
 
-
     private void logoutUser() {
 
         SharedPreferences prefs = getSharedPreferences("UserSession", Context.MODE_PRIVATE);
@@ -111,5 +141,19 @@ public class SettingsActivity extends AppCompatActivity {
 
         finish();
     }
+
+    private void saveSwitchTimestamp(String key, boolean isEnabled) {
+        if (!isEnabled) return; // Only save when turning ON
+
+        SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userId = session.getString("userId", "");
+
+        SharedPreferences prefs = getSharedPreferences(
+                "NotificationPrefs_staff_" + userId, MODE_PRIVATE
+        );
+
+        prefs.edit().putLong(key + "_enabledTime", System.currentTimeMillis()).apply();
+    }
+
 
 }

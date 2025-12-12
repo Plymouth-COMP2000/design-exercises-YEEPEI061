@@ -136,20 +136,21 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:paddingVertical="8dp"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:paddingVertical="8dp">
 
                         <TextView
                             android:id="@+id/prefOne"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Reservation Updates"
-                            android:textSize="16sp"
-                            android:textColor="@color/my_primary"/>
+                            android:text="New Reservation"
+                            android:textColor="@color/my_primary"
+                            android:textSize="16sp" />
 
                     </LinearLayout>
 
                     <Switch
+                        android:id="@+id/switchNew"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:checked="true"
@@ -179,13 +180,14 @@
                             android:id="@+id/prefTwo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Upcoming Reservation Reminders"
+                            android:text="Reservation Changes"
                             android:textSize="16sp"
                             android:textColor="@color/my_primary"/>
 
                     </LinearLayout>
 
                     <Switch
+                        android:id="@+id/switchUpdate"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:checked="true"
@@ -215,13 +217,14 @@
                             android:id="@+id/prefThree"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Promotions"
+                            android:text="Reservation Cancellation"
                             android:textSize="16sp"
                             android:textColor="@color/my_primary"/>
 
                     </LinearLayout>
 
                     <Switch
+                        android:id="@+id/switchCancel"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:checked="false"

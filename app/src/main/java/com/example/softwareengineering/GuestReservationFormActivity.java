@@ -32,6 +32,7 @@ import androidx.core.content.ContextCompat;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -68,7 +69,6 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guest_reservation_form);
 
-        // Views
         cancelReservationButton = findViewById(R.id.cancelReservationButton);
         ImageButton backButton = findViewById(R.id.settingsButton);
         backButton.setOnClickListener(v -> finish());
@@ -145,18 +145,20 @@ public class GuestReservationFormActivity extends AppCompatActivity {
 
                                 long currentTime = System.currentTimeMillis();
 
-                                NotificationModel notif = new NotificationModel(
-                                        "Reservation Cancelled",
-                                        "You have successfully cancelled your reservation for " + oldDate + " at " + oldTime + ".",
-                                        currentTime,
-                                        true,
-                                        R.drawable.ic_cancel_circle,
-                                        getResources().getColor(R.color.my_danger, null),
-                                        getResources().getColor(R.color.soft_red, null)
-                                );
+                                if (isNotificationAllowed("notif_cancel")) {
+                                    NotificationModel notif = new NotificationModel(
+                                            "Reservation Cancelled",
+                                            "You have successfully cancelled your reservation for " + oldDate + " at " + oldTime + ".",
+                                            currentTime,
+                                            true,
+                                            R.drawable.ic_cancel_circle,
+                                            getResources().getColor(R.color.my_danger, null),
+                                            getResources().getColor(R.color.soft_red, null)
+                                    );
 
-                                addNotification(notif);
-                                checkPermissionAndNotify(notif);
+                                    addNotification(notif);
+                                    checkPermissionAndNotify(notif);
+                                }
 
                                 String staffMessage = username + " cancelled their reservation for " + oldDate + " at " + oldTime + ".";
                                 NotificationModel staffNotif = new NotificationModel(
@@ -408,20 +410,25 @@ public class GuestReservationFormActivity extends AppCompatActivity {
 
                         long currentTime = System.currentTimeMillis();
 
-                        NotificationModel guestNotif = new NotificationModel(
-                                isEdit ? "Reservation Modified" : "Reservation Successful",
-                                isEdit ?
-                                        "Your reservation has been successfully changed to " + guests + " people at " + time + "." :
-                                        "Your reservation for " + guests + " people on " + date + " at " + time + " is successfully reserved.",
-                                currentTime,
-                                true,
-                                isEdit ? R.drawable.ic_modify : R.drawable.ic_check_circle,
-                                isEdit ? getResources().getColor(R.color.my_primary, null) : getResources().getColor(R.color.green, null),
-                                isEdit ? getResources().getColor(R.color.my_light_secondary, null) : getResources().getColor(R.color.soft_green, null)
-                        );
+                        String prefKey = isEdit ? "notif_update" : "notif_new";
 
-                        addNotification(guestNotif);
-                        checkPermissionAndNotify(guestNotif);
+                        if (isNotificationAllowed(prefKey)) {
+
+                            NotificationModel guestNotif = new NotificationModel(
+                                    isEdit ? "Reservation Modified" : "Reservation Successful",
+                                    isEdit ?
+                                            "Your reservation has been successfully changed to " + guests + " people at " + time + "." :
+                                            "Your reservation for " + guests + " people on " + date + " at " + time + " is successfully reserved.",
+                                    currentTime,
+                                    true,
+                                    isEdit ? R.drawable.ic_modify : R.drawable.ic_check_circle,
+                                    isEdit ? getResources().getColor(R.color.my_primary, null) : getResources().getColor(R.color.green, null),
+                                    isEdit ? getResources().getColor(R.color.my_light_secondary, null) : getResources().getColor(R.color.soft_green, null)
+                            );
+
+                            addNotification(guestNotif);
+                            checkPermissionAndNotify(guestNotif);
+                        }
 
                         String staffMessage = isEdit ?
                                 username + " updated a reservation for " + guests + " people at " + time + " on " + date + "." :
@@ -531,15 +538,24 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isNotificationAllowed(String key) {
+        SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userId = userSession.getString("userId", "");
+
+        SharedPreferences prefs = getSharedPreferences("NotificationPrefs_" + userId, MODE_PRIVATE);
+
+        return prefs.getBoolean(key, true);
+    }
+
     private void addNotificationForStaff(NotificationModel notif) {
         SharedPreferences sp = getSharedPreferences("Notifications_staff", MODE_PRIVATE);
         String json = sp.getString("list", "[]");
 
         Type type = new TypeToken<List<NotificationModel>>() {}.getType();
-        List<NotificationModel> staffList = new Gson().fromJson(json, type);
+        List<NotificationModel> notifications = new Gson().fromJson(json, type);
 
-        staffList.add(0, notif);
-        sp.edit().putString("list", new Gson().toJson(staffList)).apply();
+        notifications.add(0, notif);
+        sp.edit().putString("list", new Gson().toJson(notifications)).apply();
     }
 
 

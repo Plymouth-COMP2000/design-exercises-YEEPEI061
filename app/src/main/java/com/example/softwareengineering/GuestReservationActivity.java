@@ -68,18 +68,20 @@ public class GuestReservationActivity extends AppCompatActivity {
 
                             long currentTime = System.currentTimeMillis();
 
-                            NotificationModel notif = new NotificationModel(
-                                    "Reservation Cancelled",
-                                    "You have cancelled your reservation for " +
-                                            reservation.getDate() + " at " + reservation.getTime() + ".",
-                                    currentTime,
-                                    true,
-                                    R.drawable.ic_cancel_circle,
-                                    getResources().getColor(R.color.my_danger, null),
-                                    getResources().getColor(R.color.soft_red, null)
-                            );
-                            addNotification(notif);
-                            checkPermissionAndNotify(notif);
+                            if (isNotificationAllowed()) {
+                                NotificationModel notif = new NotificationModel(
+                                        "Reservation Cancelled",
+                                        "You have cancelled your reservation for " +
+                                                reservation.getDate() + " at " + reservation.getTime() + ".",
+                                        currentTime,
+                                        true,
+                                        R.drawable.ic_cancel_circle,
+                                        getResources().getColor(R.color.my_danger, null),
+                                        getResources().getColor(R.color.soft_red, null)
+                                );
+                                addNotification(notif);
+                                checkPermissionAndNotify(notif);
+                            }
 
                             SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
                             String username = userSession.getString("username", "Guest");
@@ -101,7 +103,6 @@ public class GuestReservationActivity extends AppCompatActivity {
                         }
                 );
             }
-
 
             @Override
             public void onEditClick(ReservationModel reservation) {
@@ -283,6 +284,16 @@ public class GuestReservationActivity extends AppCompatActivity {
         staffList.add(0, notif); // add at top
         sp.edit().putString("list", new Gson().toJson(staffList)).apply();
     }
+
+    private boolean isNotificationAllowed() {
+        SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userId = userSession.getString("userId", "");
+
+        SharedPreferences prefs = getSharedPreferences("NotificationPrefs_" + userId, MODE_PRIVATE);
+
+        return prefs.getBoolean("notif_cancel", true);
+    }
+
 
 
 }

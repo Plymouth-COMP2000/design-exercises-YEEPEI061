@@ -50,7 +50,6 @@ public class StaffMenuActivity extends AppCompatActivity {
         LayoutBottomNav.setupBottomNav(this, findViewById(android.R.id.content));
         LayoutBottomNav.highlightSelected(this, findViewById(android.R.id.content), R.id.menuSection);
 
-        // Find Views
         foodTab = findViewById(R.id.foodTab);
         drinkTab = findViewById(R.id.drinkTab);
         foodText = findViewById(R.id.foodMenuTab);
@@ -116,15 +115,40 @@ public class StaffMenuActivity extends AppCompatActivity {
         Type type = new TypeToken<List<NotificationModel>>() {}.getType();
         List<NotificationModel> staffNotifications = new Gson().fromJson(json, type);
 
-        if (staffNotifications == null || staffNotifications.isEmpty()) return;
+        if (staffNotifications == null || staffNotifications.isEmpty()) {
+            return;
+        }
 
         boolean updated = false;
+        SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String staffId = session.getString("userId", "");
+        SharedPreferences prefs = getSharedPreferences("NotificationPrefs_staff_" + staffId, MODE_PRIVATE);
 
         for (NotificationModel notif : staffNotifications) {
-            if (notif.isUnread()) {
-                checkPermissionAndNotify(notif);
-                updated = true;
+
+            if (!notif.isUnread()) continue;
+
+            if (notif.isNewReservation()) {
+                long enabledTime = prefs.getLong("notif_new_enabledTime", 0);
+                boolean allowed = isStaffNotificationAllowed("notif_new");
+                if (!allowed || notif.getTimestamp() < enabledTime) continue;
             }
+
+            if (notif.isUpdateReservation()) {
+                long enabledTime = prefs.getLong("notif_update_enabledTime", 0);
+                boolean allowed = isStaffNotificationAllowed("notif_update");
+                if (!allowed || notif.getTimestamp() < enabledTime) continue;
+            }
+
+            if (notif.isCancelReservation()) {
+                long enabledTime = prefs.getLong("notif_cancel_enabledTime", 0);
+                boolean allowed = isStaffNotificationAllowed("notif_cancel");
+                if (!allowed || notif.getTimestamp() < enabledTime) continue;
+            }
+
+            // Show only notifications created after the switch was ON
+            checkPermissionAndNotify(notif);
+            updated = true;
         }
 
         if (updated) {
@@ -209,5 +233,15 @@ public class StaffMenuActivity extends AppCompatActivity {
         manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 
+    private boolean isStaffNotificationAllowed(String key) {
+        SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String staffId = session.getString("userId", "");
+
+        SharedPreferences prefs = getSharedPreferences(
+                "NotificationPrefs_staff_" + staffId, MODE_PRIVATE
+        );
+
+        return prefs.getBoolean(key, true);
+    }
 
 }

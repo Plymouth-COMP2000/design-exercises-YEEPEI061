@@ -89,19 +89,48 @@ public class NotificationActivity extends AppCompatActivity {
         String userId = userSession.getString("userId", "");
         String role = userSession.getString("role", "guest");
 
-        String prefName;
-        if ("staff".equalsIgnoreCase(role)) {
-            prefName = "Notifications_staff";
-        } else {
-            prefName = "Notifications_" + userId;
-        }
-
+        String prefName = "guest".equalsIgnoreCase(role) ? "Notifications_" + userId : "Notifications_staff";
         SharedPreferences sp = getSharedPreferences(prefName, MODE_PRIVATE);
         String json = sp.getString("list", "[]");
 
         Type type = new TypeToken<List<NotificationModel>>(){}.getType();
-        notificationList = new Gson().fromJson(json, type);
+        List<NotificationModel> allNotifications = new Gson().fromJson(json, type);
+
+        SharedPreferences prefs = getSharedPreferences(
+                "NotificationPrefs_staff_" + userId, MODE_PRIVATE
+        );
+
+        notificationList = new ArrayList<>();
+        if (allNotifications != null) {
+            for (NotificationModel n : allNotifications) {
+
+                // Staff filters
+                if ("staff".equalsIgnoreCase(role)) {
+                    if (n.isNewReservation()) {
+                        long enabledTime = prefs.getLong("notif_new_enabledTime", 0);
+                        if (!isStaffNotificationAllowed("notif_new") || n.getTimestamp() < enabledTime) continue;
+                    }
+                    if (n.isUpdateReservation()) {
+                        long enabledTime = prefs.getLong("notif_update_enabledTime", 0);
+                        if (!isStaffNotificationAllowed("notif_update") || n.getTimestamp() < enabledTime) continue;
+                    }
+                    if (n.isCancelReservation()) {
+                        long enabledTime = prefs.getLong("notif_cancel_enabledTime", 0);
+                        if (!isStaffNotificationAllowed("notif_cancel") || n.getTimestamp() < enabledTime) continue;
+                    }
+                } else { // Guest filters
+                    if (n.isCancelReservation()) {
+                        SharedPreferences guestPrefs = getSharedPreferences("NotificationPrefs_" + userId, MODE_PRIVATE);
+                        long enabledTime = guestPrefs.getLong("notif_cancel_enabledTime", 0);
+                        if (!isGuestNotificationAllowed() || n.getTimestamp() < enabledTime) continue;
+                    }
+                }
+
+                notificationList.add(n);
+            }
+        }
     }
+
 
     private void saveNotifications() {
         SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
@@ -182,8 +211,24 @@ public class NotificationActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isStaffNotificationAllowed(String key) {
+        SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String staffId = session.getString("userId", "");
 
+        SharedPreferences prefs = getSharedPreferences(
+                "NotificationPrefs_staff_" + staffId, MODE_PRIVATE
+        );
 
+        return prefs.getBoolean(key, true);
+    }
+
+    private boolean isGuestNotificationAllowed() {
+        SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userId = userSession.getString("userId", "");
+
+        SharedPreferences prefs = getSharedPreferences("NotificationPrefs_" + userId, MODE_PRIVATE);
+        return prefs.getBoolean("notif_cancel", true);
+    }
 
 
 }
