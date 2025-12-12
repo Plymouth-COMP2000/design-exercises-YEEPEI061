@@ -26,7 +26,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class GuestReservationActivity extends AppCompatActivity {
@@ -185,7 +184,7 @@ public class GuestReservationActivity extends AppCompatActivity {
     }
 
     private void sortReservations() {
-        Collections.sort(reservations, (r1, r2) -> {
+        reservations.sort((r1, r2) -> {
             if (r1.getStatus().equals(r2.getStatus())) return 0;
             return r1.getStatus().equals("Upcoming") ? -1 : 1;
         });

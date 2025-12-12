@@ -95,6 +95,7 @@ public class GuestMenuActivity extends AppCompatActivity {
     private void showPendingGuestNotifications() {
         SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
         String userId = userSession.getString("userId", "");
+        long signupTime = userSession.getLong("signupTime", 0);
         SharedPreferences sp = getSharedPreferences("Notifications_" + userId, MODE_PRIVATE);
         String json = sp.getString("list", "[]");
 
@@ -110,10 +111,11 @@ public class GuestMenuActivity extends AppCompatActivity {
 
         for (NotificationModel notif : guestNotifications) {
             if (!notif.isUnread()) continue;
+            if (notif.getTimestamp() < signupTime) continue;
 
             // Only show cancel notifications if switch is on & notification was created after switch was enabled
             if (notif.isCancelReservation()) {
-                boolean allowed = isGuestNotificationAllowed("notif_cancel");
+                boolean allowed = isGuestNotificationAllowed();
                 if (!allowed || notif.getTimestamp() < cancelEnabledTime) continue;
             }
 
@@ -201,12 +203,12 @@ public class GuestMenuActivity extends AppCompatActivity {
         manager.notify((int) System.currentTimeMillis(), builder.build());
     }
 
-    private boolean isGuestNotificationAllowed(String key) {
+    private boolean isGuestNotificationAllowed() {
         SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
         String userId = userSession.getString("userId", "");
 
         SharedPreferences prefs = getSharedPreferences("NotificationPrefs_" + userId, MODE_PRIVATE);
-        return prefs.getBoolean(key, true);
+        return prefs.getBoolean("notif_cancel", true);
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.softwareengineering;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservationAdapter.ViewHolder> {
 
-    private Context context;
+    private final Context context;
     private List<ReservationModel> list;
-    private OnStaffReservationListener listener;
+    private final OnStaffReservationListener listener;
 
     public interface OnStaffReservationListener {
         void onCancel(ReservationModel reservation);
@@ -43,6 +43,7 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
         return new ViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ReservationModel r = list.get(position);
@@ -76,7 +77,7 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
         return list.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView customerImage;
         TextView customerName, timeTableText, dateText;
@@ -95,8 +96,9 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateList(List<ReservationModel> newList) {
-        Collections.sort(newList, (r1, r2) -> {
+        newList.sort((r1, r2) -> {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy h:mm a", Locale.ENGLISH);
                 int currentYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -106,7 +108,9 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
 
                 Date now = new Date();
 
+                assert date1 != null;
                 boolean r1Past = date1.before(now);
+                assert date2 != null;
                 boolean r2Past = date2.before(now);
 
                 if (r1Past && !r2Past) return 1;
@@ -136,6 +140,7 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
             Date reservationDate = sdf.parse(fullString);
             Date now = new Date();
 
+            assert reservationDate != null;
             return reservationDate.before(now) ? "Past" : "Upcoming";
 
         } catch (Exception e) {

@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 public class GuestReservationFormActivity extends AppCompatActivity {
 
@@ -49,7 +50,6 @@ public class GuestReservationFormActivity extends AppCompatActivity {
     private EditText guestCountInput;
     private EditText requestInput;
     private Button saveButton;
-    private Button cancelReservationButton;
     private int reservationId = -1;
     private String mode;
     private static final String CHANNEL_ID = "reservation_channel";
@@ -59,7 +59,7 @@ public class GuestReservationFormActivity extends AppCompatActivity {
     // Table selection
     private enum TableStatus {AVAILABLE, OCCUPIED, SELECTED}
 
-    private Map<FrameLayout, TableStatus> tableMap = new HashMap<>();
+    private final Map<FrameLayout, TableStatus> tableMap = new HashMap<>();
     private FrameLayout selectedTable = null;
 
     @SuppressLint("SetTextI18n")
@@ -68,7 +68,7 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_guest_reservation_form);
 
-        cancelReservationButton = findViewById(R.id.cancelReservationButton);
+        Button cancelReservationButton = findViewById(R.id.cancelReservationButton);
         ImageButton backButton = findViewById(R.id.settingsButton);
         backButton.setOnClickListener(v -> finish());
 
@@ -264,9 +264,10 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                 int year = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
                 String fullDateStr = dateStr + " " + year + " " + timeStr;
 
-                SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm a");
+                @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm a");
                 sdf.setLenient(false);
                 Date selectedDate = sdf.parse(fullDateStr);
+                assert selectedDate != null;
                 dateValid = !selectedDate.before(new Date());
 
 
@@ -340,7 +341,7 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         };
 
         for (FrameLayout table : tables) {
-            int tintColor = table.getBackgroundTintList().getDefaultColor();
+            int tintColor = Objects.requireNonNull(table.getBackgroundTintList()).getDefaultColor();
             if (tintColor == ContextCompat.getColor(this, R.color.green)) {
                 tableMap.put(table, TableStatus.AVAILABLE);
             } else {
@@ -612,6 +613,7 @@ public class GuestReservationFormActivity extends AppCompatActivity {
             return;
         }
 
+        assert selectedDateTime != null;
         long selectedStart = selectedDateTime.getTime();
         long selectedEnd = selectedStart + (45 * 60 * 1000);
 

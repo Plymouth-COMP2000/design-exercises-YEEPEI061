@@ -1,5 +1,6 @@
 package com.example.softwareengineering;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,8 +20,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     ImageView profileImage;
 
-    private String USER_ID;
-
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,9 +43,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         usernameText.setText(username);
 
-        Switch switchNew = findViewById(R.id.switchNew);
-        Switch switchUpdate = findViewById(R.id.switchUpdate);
-        Switch switchCancel = findViewById(R.id.switchCancel);
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch switchNew = findViewById(R.id.switchNew);
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch switchUpdate = findViewById(R.id.switchUpdate);
+        @SuppressLint("UseSwitchCompatOrMaterialCode") Switch switchCancel = findViewById(R.id.switchCancel);
 
         String prefName;
         if ("staff".equalsIgnoreCase(role)) {
@@ -115,7 +115,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE);
         SharedPreferences profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
-        USER_ID = sharedPref.getString("userId", "");
+        String USER_ID = sharedPref.getString("userId", "");
 
         String savedPath = profilePrefs.getString("profileImagePath_" + USER_ID, null);
         if (savedPath != null) {

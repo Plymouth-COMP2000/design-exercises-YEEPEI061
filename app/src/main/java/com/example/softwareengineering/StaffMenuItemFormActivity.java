@@ -115,9 +115,7 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
                         getResources().getColor(R.color.my_primary, null),
                         "Save Changes",
                         "Are you sure you want to save changes?",
-                        () -> {
-                            saveMenuItem(true, category, typeSpinner);
-                        }
+                        () -> saveMenuItem(true, category, typeSpinner)
                 );
             });
 
@@ -141,19 +139,14 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
             descriptionInput.addTextChangedListener(watcher);
 
 
-            saveButton.setOnClickListener(v -> {
-                PopupHelper.showPopup(
-                        this,
-                        R.drawable.ic_info,
-                        getResources().getColor(R.color.my_primary, null),
-                        "Add Item",
-                        "Confirm adding this new item?",
-                        () -> {
-                            saveMenuItem(false, category, typeSpinner);
-
-                        }
-                );
-            });
+            saveButton.setOnClickListener(v -> PopupHelper.showPopup(
+                    this,
+                    R.drawable.ic_info,
+                    getResources().getColor(R.color.my_primary, null),
+                    "Add Item",
+                    "Confirm adding this new item?",
+                    () -> saveMenuItem(false, category, typeSpinner)
+            ));
         }
 
         uploadedImage.setOnClickListener(v -> openGallery());

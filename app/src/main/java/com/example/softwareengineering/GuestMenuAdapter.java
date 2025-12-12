@@ -1,5 +1,6 @@
 package com.example.softwareengineering;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +17,8 @@ public class GuestMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    private Context context;
-    private List<Object> items;
+    private final Context context;
+    private final List<Object> items;
 
     public GuestMenuAdapter(Context context, List<Object> items) {
         this.context = context;
@@ -41,6 +42,7 @@ public class GuestMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (getItemViewType(position) == TYPE_HEADER) {
@@ -51,7 +53,7 @@ public class GuestMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             itemHolder.name.setText(item.getName());
             itemHolder.description.setText(item.getDescription());
-            String priceText = (item.getPrice() % 1 == 0)
+            @SuppressLint("DefaultLocale") String priceText = (item.getPrice() % 1 == 0)
                     ? String.format("%d", (int) item.getPrice())
                     : String.format("%.2f", item.getPrice());
             itemHolder.price.setText("RM " + priceText);
@@ -63,6 +65,7 @@ public class GuestMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             }
 
             boolean isLastInCategory = true;
+
             for (int i = position + 1; i < items.size(); i++) {
                 if (items.get(i) instanceof MenuItemModel) {
                     MenuItemModel nextItem = (MenuItemModel) items.get(i);
@@ -70,10 +73,9 @@ public class GuestMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                         isLastInCategory = false;
                     }
                     break;
-                } else {
-                    break;
                 }
             }
+
 
             // Hide divider if this is the last item in the list
             if (position == items.size() - 1) {

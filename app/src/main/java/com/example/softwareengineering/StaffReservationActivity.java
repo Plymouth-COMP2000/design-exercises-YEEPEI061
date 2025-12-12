@@ -3,6 +3,7 @@ package com.example.softwareengineering;
 import android.app.DatePickerDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -21,6 +22,7 @@ import java.util.Locale;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 public class StaffReservationActivity extends AppCompatActivity {
 
@@ -49,16 +51,14 @@ public class StaffReservationActivity extends AppCompatActivity {
 
         staffRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        adapter = new StaffReservationAdapter(this, new ArrayList<>(), reservation -> {
-            PopupHelper.showPopup(
-                    StaffReservationActivity.this,
-                    R.drawable.ic_cancel_circle,
-                    getResources().getColor(R.color.my_danger, null),
-                    "Cancel Reservation",
-                    "Are you sure you want to cancel this reservation?",
-                    () -> cancelReservation(reservation)
-            );
-        });
+        adapter = new StaffReservationAdapter(this, new ArrayList<>(), reservation -> PopupHelper.showPopup(
+                StaffReservationActivity.this,
+                R.drawable.ic_cancel_circle,
+                getResources().getColor(R.color.my_danger, null),
+                "Cancel Reservation",
+                "Are you sure you want to cancel this reservation?",
+                () -> cancelReservation(reservation)
+        ));
 
         staffRecycler.setAdapter(adapter);
 
@@ -90,16 +90,14 @@ public class StaffReservationActivity extends AppCompatActivity {
             AlertDialog dialog = new AlertDialog.Builder(this)
                     .setTitle("Filter Reservations")
                     .setView(layout)
-                    .setPositiveButton("Apply", (d, which) -> {
-                        applyFilters();
-                    })
+                    .setPositiveButton("Apply", (d, which) -> applyFilters())
                     .setNegativeButton("Clear", (d, which) -> {
                         selectedDay = selectedMonth = selectedYear = selectedGuests = null;
                         loadReservations();
                     })
                     .create();
 
-            dialog.getWindow().setBackgroundDrawableResource(R.drawable.card_bg);
+            Objects.requireNonNull(dialog.getWindow()).setBackgroundDrawableResource(R.drawable.card_bg);
 
             datePickerBtn.setOnClickListener(v1 -> {
                 Calendar calendar = Calendar.getInstance();
@@ -148,13 +146,14 @@ public class StaffReservationActivity extends AppCompatActivity {
                     int currentYear = Calendar.getInstance().get(Calendar.YEAR);
                     Date resDate = sdf.parse(r.getDate() + " " + currentYear);
                     Calendar resCal = Calendar.getInstance();
+                    assert resDate != null;
                     resCal.setTime(resDate);
 
                     matchesDate = (resCal.get(Calendar.DAY_OF_MONTH) == selectedDay &&
                             resCal.get(Calendar.MONTH) == selectedMonth &&
                             resCal.get(Calendar.YEAR) == selectedYear);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("ReservationFilter", "Error parsing reservation date", e);
                     matchesDate = false;
                 }
             }

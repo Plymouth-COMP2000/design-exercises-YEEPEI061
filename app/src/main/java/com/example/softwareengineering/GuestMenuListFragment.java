@@ -13,13 +13,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class GuestMenuListFragment extends Fragment {
 
-    private String category;
     private MenuDatabaseHelper dbHelper;
-    private GuestMenuAdapter adapter;
-    private RecyclerView recyclerView;
 
     private List<Object> prepareSectionedMenu(String category) {
         List<MenuItemModel> allItems = dbHelper.getMenuItemsByCategory(category);
@@ -30,12 +28,12 @@ public class GuestMenuListFragment extends Fragment {
             if (!grouped.containsKey(item.getType())) {
                 grouped.put(item.getType(), new ArrayList<>());
             }
-            grouped.get(item.getType()).add(item);
+            Objects.requireNonNull(grouped.get(item.getType())).add(item);
         }
 
         for (String type : grouped.keySet()) {
             sectionedList.add(type);
-            sectionedList.addAll(grouped.get(type));
+            sectionedList.addAll(Objects.requireNonNull(grouped.get(type)));
         }
         return sectionedList;
     }
@@ -47,14 +45,14 @@ public class GuestMenuListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_guest_menu_list, container, false);
 
         Bundle args = getArguments();
-        category = (args != null) ? args.getString("category", "food") : "food";
+        String category = (args != null) ? args.getString("category", "food") : "food";
 
         dbHelper = new MenuDatabaseHelper(getContext());
-        recyclerView = view.findViewById(R.id.menuGuestRecyclerView);
+        RecyclerView recyclerView = view.findViewById(R.id.menuGuestRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         List<Object> sectionedMenu = prepareSectionedMenu(category);
-        adapter = new GuestMenuAdapter(getContext(), sectionedMenu);
+        GuestMenuAdapter adapter = new GuestMenuAdapter(getContext(), sectionedMenu);
         recyclerView.setAdapter(adapter);
 
         return view;

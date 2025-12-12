@@ -2,12 +2,12 @@ package com.example.softwareengineering;
 
 public class MenuItemModel {
     private int id;
-    private String name;
-    private String category;
-    private String type;
-    private double price;
-    private String imageUri;
-    private String description;
+    private final String name;
+    private final String category;
+    private final String type;
+    private final double price;
+    private final String imageUri;
+    private final String description;
 
     public MenuItemModel(int id, String name, String category, String type, double price, String imageUri, String description) {
         this.id = id;

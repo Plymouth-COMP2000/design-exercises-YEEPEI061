@@ -94,7 +94,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         return list.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView icon;
         TextView title, message, time;

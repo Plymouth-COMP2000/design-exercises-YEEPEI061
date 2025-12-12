@@ -46,7 +46,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private FrameLayout loadingOverlay;
     private ImageView profileImage;
-    private ImageButton changePhotoButton;
 
     private ActivityResultLauncher<Intent> galleryLauncher;
     private String tempProfileImagePath = null;
@@ -60,7 +59,7 @@ public class EditProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit_profile);
 
         profileImage = findViewById(R.id.profileImage);
-        changePhotoButton = findViewById(R.id.changePhotoButton);
+        ImageButton changePhotoButton = findViewById(R.id.changePhotoButton);
 
         SharedPreferences sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE);
         profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
@@ -134,7 +133,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                         loadingOverlay.setVisibility(View.VISIBLE);
 
-                        InputStream inputStream = null;
+                        InputStream inputStream;
                         try {
                             inputStream = getContentResolver().openInputStream(imageUri);
                             Log.d("PROFILE_DEBUG", "InputStream opened = " + (inputStream != null));
@@ -185,14 +184,14 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void openGallery() {
+        Intent intent;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
-            galleryLauncher.launch(intent);
+            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
         } else {
-            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent = new Intent(Intent.ACTION_PICK);
             intent.setType("image/*");
-            galleryLauncher.launch(intent);
         }
+        galleryLauncher.launch(intent);
     }
 
 
@@ -273,7 +272,6 @@ public class EditProfileActivity extends AppCompatActivity {
         String contact = contactInput.getText().toString().trim();
         String password = passwordInput.getText().toString().trim();
         String confirmPassword = confirmPasswordInput.getText().toString().trim();
-        String oldUsername = username;
 
         if (!password.isEmpty() && !password.equals(confirmPassword)) {
             Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();

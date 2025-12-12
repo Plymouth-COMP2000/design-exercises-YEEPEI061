@@ -1,5 +1,6 @@
 package com.example.softwareengineering;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,7 +28,7 @@ public class NotificationActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     NotificationAdapter adapter;
     List<NotificationModel> notificationList = new ArrayList<>();
-    private boolean showUnreadOnly = false;
+    private final boolean showUnreadOnly = false;
 
     TextView markAllRead;
 
@@ -63,15 +64,13 @@ public class NotificationActivity extends AppCompatActivity {
 
 
         allButton.setOnClickListener(v -> {
-            showUnreadOnly = false;
-            refreshNotifications(showUnreadOnly);
+            refreshNotifications(false);
             setButtonSelected(allButton, true);
             setButtonSelected(unreadButton, false);
         });
 
         unreadButton.setOnClickListener(v -> {
-            showUnreadOnly = true;
-            refreshNotifications(showUnreadOnly);
+            refreshNotifications(true);
             setButtonSelected(allButton, false);
             setButtonSelected(unreadButton, true);
         });
@@ -89,6 +88,7 @@ public class NotificationActivity extends AppCompatActivity {
         String userId = userSession.getString("userId", "");
         String role = userSession.getString("role", "guest");
 
+        long signupTime = userSession.getLong("signupTime", 0);
         String prefName = "guest".equalsIgnoreCase(role) ? "Notifications_" + userId : "Notifications_staff";
         SharedPreferences sp = getSharedPreferences(prefName, MODE_PRIVATE);
         String json = sp.getString("list", "[]");
@@ -104,6 +104,7 @@ public class NotificationActivity extends AppCompatActivity {
         if (allNotifications != null) {
             for (NotificationModel n : allNotifications) {
 
+                if (n.getTimestamp() < signupTime) continue;
                 // Staff filters
                 if ("staff".equalsIgnoreCase(role)) {
                     if (n.isNewReservation()) {
@@ -152,6 +153,7 @@ public class NotificationActivity extends AppCompatActivity {
         editor.apply();
     }
 
+    @SuppressLint("SetTextI18n")
     private void refreshNotifications(boolean showUnreadOnly) {
         List<NotificationModel> notifList = new ArrayList<>();
         for (NotificationModel n : notificationList) {

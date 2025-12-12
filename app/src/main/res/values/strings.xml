@@ -25,6 +25,15 @@
     <string name="newPassword">New Password</string>
     <string name="confirmNewPassword">Confirm New Password</string>
 
+    <string name="chooseProfileTitle">Choose your Profile Picture</string>
+    <string name="chooseProfileSubtitle">Select an avatar or upload your own photo.</string>
+    <string name="boy">Boy</string>
+    <string name="girl">Girl</string>
+    <string name="preview">Preview</string>
+    <string name="uploadPhoto">Upload Photo</string>
+    <string name="confirm">Confirm</string>
+    <string name="skip">Skip</string>
+
     <string name="menu">Menu</string>
     <string name="currentMenu">Current Menu</string>
     <string name="foodMenu">Food Menu</string>
@@ -74,6 +83,7 @@
     <string name="editReservation">Edit Reservation</string>
     <string name="cancelReservation">Cancel Reservation</string>
     <string name="saveChanges">Save Changes</string>
+    <string name="noReservation">No Reservation</string>
 
     <string name="logout">Logout</string>
     <string name="profile">Profile</string>

@@ -1,5 +1,6 @@
 package com.example.softwareengineering;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,10 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -26,9 +27,9 @@ public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.V
         void onBookAgainClick(ReservationModel reservation);
     }
 
-    private Context context;
-    private List<Object> items;
-    private OnReservationClickListener listener;
+    private final Context context;
+    private final List<Object> items;
+    private final OnReservationClickListener listener;
 
     public GuestReservationAdapter(Context context, List<ReservationModel> reservations, OnReservationClickListener listener) {
         this.context = context;
@@ -39,7 +40,7 @@ public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.V
     private List<Object> generateItemsWithHeaders(List<ReservationModel> reservations) {
         List<Object> result = new ArrayList<>();
 
-        Collections.sort(reservations, (r1, r2) -> r1.getStatus().equals(r2.getStatus()) ? 0 :
+        reservations.sort((r1, r2) -> r1.getStatus().equals(r2.getStatus()) ? 0 :
                 r1.getStatus().equals("Upcoming") ? -1 : 1);
 
         // Upcoming
@@ -70,7 +71,7 @@ public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
 
-    public class EmptyReservationItem {
+    public static class EmptyReservationItem {
         private final String type;
         public EmptyReservationItem(String type) { this.type = type; }
         public String getType() { return type; }
@@ -103,6 +104,7 @@ public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Object item = items.get(position);
@@ -113,12 +115,12 @@ public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.V
 
             if (header.startsWith("No ")) {
                 ((HeaderViewHolder) holder).headerText.setTextColor(
-                        context.getResources().getColor(R.color.my_medium)
+                        ContextCompat.getColor(context, R.color.my_medium)
                 );
                 ((HeaderViewHolder) holder).headerText.setTextSize(15f);
             } else {
                 ((HeaderViewHolder) holder).headerText.setTextColor(
-                        context.getResources().getColor(R.color.black)
+                        ContextCompat.getColor(context, R.color.black)
                 );
             }
 
@@ -207,6 +209,7 @@ public class GuestReservationAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateReservations(List<ReservationModel> newList) {
         this.items.clear();
         this.items.addAll(generateItemsWithHeaders(newList));

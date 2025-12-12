@@ -2,13 +2,13 @@ package com.example.softwareengineering;
 
 public class NotificationModel {
 
-    private String title;
-    private String message;
-    private long timestamp;
+    private final String title;
+    private final String message;
+    private final long timestamp;
     private boolean unread;
-    private int icon;
-    private int iconColor;
-    private int iconBgColor;
+    private final int icon;
+    private final int iconColor;
+    private final int iconBgColor;
 
     public NotificationModel(String title, String message, long timestamp, boolean unread, int icon, int iconColor, int iconBgColor) {
         this.title = title;

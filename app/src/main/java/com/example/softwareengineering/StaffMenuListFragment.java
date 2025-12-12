@@ -16,13 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class StaffMenuListFragment extends Fragment {
 
     private String category;
     private MenuDatabaseHelper dbHelper;
     private StaffMenuAdapter adapter;
-    private RecyclerView recyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -35,7 +35,7 @@ public class StaffMenuListFragment extends Fragment {
         category = (args != null) ? args.getString("category", "food") : "food";
 
         dbHelper = new MenuDatabaseHelper(getContext());
-        recyclerView = view.findViewById(R.id.menuRecyclerView);
+        RecyclerView recyclerView = view.findViewById(R.id.menuRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         ImageButton filterButton = view.findViewById(R.id.filterButton);
@@ -53,7 +53,7 @@ public class StaffMenuListFragment extends Fragment {
             }
 
             popup.setOnMenuItemClickListener(menuItem -> {
-                String selectedType = menuItem.getTitle().toString();
+                String selectedType = Objects.requireNonNull(menuItem.getTitle()).toString();
                 filterByType(selectedType);
                 return true;
             });

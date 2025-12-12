@@ -3,14 +3,14 @@ package com.example.softwareengineering;
 public class ReservationModel {
 
     private int id;
-    private String date;
-    private String time;
-    private int guestCount;
-    private String tableName;
-    private String status;
-    private String specialRequest;
-    private String customerName;
-    private String guestId;
+    private final String date;
+    private final String time;
+    private final int guestCount;
+    private final String tableName;
+    private final String status;
+    private final String specialRequest;
+    private final String customerName;
+    private final String guestId;
     private long dateTimeMillis;
 
     public ReservationModel(int id, String date, String time, int guestCount,

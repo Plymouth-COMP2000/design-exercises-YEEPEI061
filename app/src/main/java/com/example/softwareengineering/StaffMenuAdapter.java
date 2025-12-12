@@ -1,5 +1,6 @@
 package com.example.softwareengineering;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -15,9 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 public class StaffMenuAdapter extends RecyclerView.Adapter<StaffMenuAdapter.MenuViewHolder> {
 
-    private List<MenuItemModel> menuList;
-    private Context context;
-    private MenuItemListener listener;
+    private final List<MenuItemModel> menuList;
+    private final Context context;
+    private final MenuItemListener listener;
 
     public interface MenuItemListener {
         void onEdit(MenuItemModel item);
@@ -37,12 +38,13 @@ public class StaffMenuAdapter extends RecyclerView.Adapter<StaffMenuAdapter.Menu
         return new MenuViewHolder(view);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MenuViewHolder holder, int position) {
         MenuItemModel item = menuList.get(position);
         holder.itemName.setText(item.getName());
         double price = item.getPrice();
-        String priceText = (price % 1 == 0)
+        @SuppressLint("DefaultLocale") String priceText = (price % 1 == 0)
                 ? String.format("%d", (int) price)
                 : String.format("%.2f", price);
         holder.itemPrice.setText("RM " + priceText);
@@ -87,11 +89,11 @@ public class StaffMenuAdapter extends RecyclerView.Adapter<StaffMenuAdapter.Menu
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void updateList(List<MenuItemModel> newList) {
         menuList.clear();
         menuList.addAll(newList);
         notifyDataSetChanged();
     }
-
 
 }

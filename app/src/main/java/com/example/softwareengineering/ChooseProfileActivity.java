@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -38,7 +39,6 @@ public class ChooseProfileActivity extends AppCompatActivity {
     private ImageView tickBoy, tickGirl, previewUploadedImage;
     private LinearLayout profileSelector, uploadedImageContainer;
 
-    private Button uploadImageButton, confirmButton, skipButton;
     private static final String BASE_URL = "http://10.240.72.69/comp2000/coursework/";
     private static final String STUDENT_ID = "bsse2506028";
     private Uri uploadedImageUri = null;
@@ -61,9 +61,9 @@ public class ChooseProfileActivity extends AppCompatActivity {
         uploadedImageContainer = findViewById(R.id.uploadedImageContainer);
         previewUploadedImage = findViewById(R.id.previewUploadedImage);
 
-        uploadImageButton = findViewById(R.id.uploadImageButton);
-        confirmButton = findViewById(R.id.confirmButton);
-        skipButton = findViewById(R.id.skipButton);
+        Button uploadImageButton = findViewById(R.id.uploadImageButton);
+        Button confirmButton = findViewById(R.id.confirmButton);
+        Button skipButton = findViewById(R.id.skipButton);
         loadingOverlay = findViewById(R.id.loadingOverlay);
 
         uploadedImageContainer.setVisibility(View.GONE);
@@ -93,7 +93,7 @@ public class ChooseProfileActivity extends AppCompatActivity {
                                 processedBitmap = Bitmap.createScaledBitmap(cropped, 600, 600, true);
 
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Log.e("ChooseProfileActivity", "Error processing image", e);
                             }
 
                             Bitmap finalBitmap = processedBitmap;
@@ -216,7 +216,7 @@ public class ChooseProfileActivity extends AppCompatActivity {
                             finish();
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e("ChooseProfileActivity", "Error setting profile", e);
                         loadingOverlay.setVisibility(View.GONE);
                     }
                 },
@@ -232,6 +232,12 @@ public class ChooseProfileActivity extends AppCompatActivity {
     private String saveImageToInternalStorage(Uri uri, String fileNamePrefix) {
         try {
             InputStream inputStream = getContentResolver().openInputStream(uri);
+
+            if (inputStream == null) {
+                Log.e("ChooseProfileActivity", "Failed to open input stream for URI: " + uri);
+                return null;
+            }
+
             String fileName = fileNamePrefix + ".jpg";
             File file = new File(getFilesDir(), fileName);
 
@@ -249,7 +255,7 @@ public class ChooseProfileActivity extends AppCompatActivity {
             return file.getAbsolutePath();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e("ChooseProfileActivity", "Error saving image to internal storage", e);
             return null;
         }
     }

@@ -122,11 +122,13 @@ public class StaffMenuActivity extends AppCompatActivity {
         boolean updated = false;
         SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
         String staffId = session.getString("userId", "");
+        long signupTime = session.getLong("signupTime", 0);
         SharedPreferences prefs = getSharedPreferences("NotificationPrefs_staff_" + staffId, MODE_PRIVATE);
 
         for (NotificationModel notif : staffNotifications) {
 
             if (!notif.isUnread()) continue;
+            if (notif.getTimestamp() < signupTime) continue;
 
             if (notif.isNewReservation()) {
                 long enabledTime = prefs.getLong("notif_new_enabledTime", 0);

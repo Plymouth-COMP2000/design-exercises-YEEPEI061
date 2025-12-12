@@ -23,6 +23,8 @@ import androidx.cardview.widget.CardView;
 
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
+
 public class SignUpActivity extends AppCompatActivity {
 
     CardView staffRole, guestRole;
@@ -118,10 +120,12 @@ public class SignUpActivity extends AppCompatActivity {
                             loadingOverlay.setVisibility(View.GONE);
                             Toast.makeText(SignUpActivity.this, "Account created! Please choose your profile", Toast.LENGTH_SHORT).show();
 
+                            long signupTime = System.currentTimeMillis();
                             SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
                             SharedPreferences.Editor editor = session.edit();
                             editor.putString("username", username);
                             editor.putString("role", selectedRole);
+                            editor.putLong("signupTime", signupTime);
                             editor.apply();
 
                             startActivity(new Intent(SignUpActivity.this, ChooseProfileActivity.class));
@@ -134,7 +138,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 errorMsg += " (" + error.networkResponse.statusCode + ")";
 
                                 try {
-                                    String responseBody = new String(error.networkResponse.data, "utf-8");
+                                    String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
                                     errorMsg += "\n" + responseBody;
                                 } catch (Exception e) {
                                     Log.e("SignUpError", "Exception occurred", e);
@@ -150,7 +154,7 @@ public class SignUpActivity extends AppCompatActivity {
 
             } catch (Exception e) {
                 loadingOverlay.setVisibility(View.GONE);
-                e.printStackTrace();
+                Log.e("SignUpActivity", "Unexpected error during signup", e);
                 Toast.makeText(SignUpActivity.this, "Unexpected error", Toast.LENGTH_SHORT).show();
             }
         });

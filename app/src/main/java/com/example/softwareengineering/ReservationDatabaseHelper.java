@@ -29,11 +29,8 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_CUSTOMER_NAME= "customerName";
     private static final String COLUMN_CUSTOMER_USER_ID = "customerUserId";
 
-    private Context context;
-
     public ReservationDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
     }
 
     @Override
@@ -147,6 +144,7 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
             Date reservationDate = sdf.parse(fullString);
             Date now = new Date();
 
+            assert reservationDate != null;
             if (reservationDate.before(now)) {
                 return "Past";
             }
@@ -176,6 +174,7 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
                 try {
                     SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy h:mm a", Locale.ENGLISH);
                     Date parsed = sdf.parse(fullDateTime);
+                    assert parsed != null;
                     datetimeMillis = parsed.getTime();
                 } catch (Exception ignored) {}
 
