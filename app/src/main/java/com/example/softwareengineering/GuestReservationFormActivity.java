@@ -39,6 +39,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class GuestReservationFormActivity extends AppCompatActivity {
@@ -54,8 +55,6 @@ public class GuestReservationFormActivity extends AppCompatActivity {
     private static final String CHANNEL_ID = "reservation_channel";
     private static final int REQ_POST_NOTIF = 101;
     private NotificationModel pendingNotification;
-    private static final String BASE_URL = "http://10.240.72.69/comp2000/coursework/";
-    private static final String STUDENT_ID = "bsse2506028";
 
     // Table selection
     private enum TableStatus {AVAILABLE, OCCUPIED, SELECTED}
@@ -86,6 +85,9 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         dateInput.setFocusable(false);
         dateInput.setClickable(true);
         dateInput.setOnClickListener(v -> showDatePicker());
+        dateInput.addTextChangedListener(refreshWatcher);
+        timeInput.addTextChangedListener(refreshWatcher);
+
 
         timeInput.setFocusable(false);
         timeInput.setClickable(true);
@@ -120,6 +122,27 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                     }
                 }
             }
+
+            TextWatcher watcher = new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    checkFields();
+                }
+            };
+
+            dateInput.addTextChangedListener(watcher);
+            timeInput.addTextChangedListener(watcher);
+            guestCountInput.addTextChangedListener(watcher);
+
+            checkFields();
 
             if ("edit".equals(mode)) {
                 titleText.setText("Edit Reservation");
@@ -224,7 +247,6 @@ public class GuestReservationFormActivity extends AppCompatActivity {
             });
         }
     }
-
 
     private void checkFields() {
         boolean allFilled = !dateInput.getText().toString().trim().isEmpty()
@@ -557,6 +579,84 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         notifications.add(0, notif);
         sp.edit().putString("list", new Gson().toJson(notifications)).apply();
     }
+
+    TextWatcher refreshWatcher = new TextWatcher() {
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        @Override public void afterTextChanged(Editable s) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            updateTableAvailability();
+        }
+    };
+
+    private void updateTableAvailability() {
+        String date = dateInput.getText().toString().trim();
+        String time = timeInput.getText().toString().trim();
+
+        if (date.isEmpty() || time.isEmpty()) return;
+
+        ReservationDatabaseHelper db = new ReservationDatabaseHelper(this);
+        List<ReservationModel> reservations = db.getAllReservationsWithDateTime();
+        db.close();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm a", Locale.ENGLISH);
+        Date selectedDateTime;
+
+        try {
+            int year = Calendar.getInstance().get(Calendar.YEAR);
+            String combined = date + " " + year + " " + time;
+            selectedDateTime = sdf.parse(combined);
+
+        } catch (Exception e) {
+            return;
+        }
+
+        long selectedStart = selectedDateTime.getTime();
+        long selectedEnd = selectedStart + (45 * 60 * 1000);
+
+        for (Map.Entry<FrameLayout, TableStatus> entry : tableMap.entrySet()) {
+            entry.getKey().setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.green)
+            ));
+            tableMap.put(entry.getKey(), TableStatus.AVAILABLE);
+        }
+
+        for (ReservationModel r : reservations) {
+
+            long rStart = r.getDateTimeMillis();
+            long rEnd = rStart + (45 * 60 * 1000);
+
+            boolean overlap = (selectedStart < rEnd && rStart < selectedEnd);
+
+            if (overlap) {
+                for (FrameLayout table : tableMap.keySet()) {
+                    String tableName =
+                            "Table " + getResources()
+                                    .getResourceEntryName(table.getId())
+                                    .replace("tableT", "");
+
+                    if (tableName.equals(r.getTable())) {
+
+                        table.setBackgroundTintList(ColorStateList.valueOf(
+                                ContextCompat.getColor(this, R.color.gray)
+                        ));
+                        tableMap.put(table, TableStatus.OCCUPIED);
+                    }
+                }
+            }
+        }
+
+        // Keep selected table blue
+        if (selectedTable != null && tableMap.get(selectedTable) == TableStatus.AVAILABLE) {
+            selectedTable.setBackgroundTintList(ColorStateList.valueOf(
+                    ContextCompat.getColor(this, R.color.my_primary)
+            ));
+            tableMap.put(selectedTable, TableStatus.SELECTED);
+        }
+    }
+
+
 
 
 }

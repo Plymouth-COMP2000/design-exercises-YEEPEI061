@@ -245,7 +245,7 @@
                             android:layout_columnWeight="1"
                             android:layout_margin="6dp"
                             android:background="@drawable/rounded_image_bg"
-                            android:backgroundTint="@color/gray"
+                            android:backgroundTint="@color/green"
                             android:foreground="?attr/selectableItemBackgroundBorderless"
                             android:clickable="true"
                             android:focusable="true">
@@ -285,7 +285,7 @@
                             android:layout_height="70dp"
                             android:layout_columnWeight="1"
                             android:layout_margin="6dp"
-                            android:backgroundTint="@color/gray"
+                            android:backgroundTint="@color/green"
                             android:background="@drawable/rounded_image_bg">
 
                             <TextView
@@ -363,7 +363,7 @@
                             android:layout_height="70dp"
                             android:layout_columnWeight="1"
                             android:layout_margin="6dp"
-                            android:backgroundTint="@color/gray"
+                            android:backgroundTint="@color/green"
                             android:background="@drawable/rounded_image_bg">
 
                             <TextView
@@ -383,7 +383,7 @@
                             android:layout_height="70dp"
                             android:layout_columnWeight="1"
                             android:layout_margin="6dp"
-                            android:backgroundTint="@color/gray"
+                            android:backgroundTint="@color/green"
                             android:background="@drawable/rounded_image_bg">
 
                             <TextView
@@ -422,7 +422,7 @@
                             android:layout_columnSpan="2"
                             android:layout_columnWeight="2"
                             android:layout_margin="6dp"
-                            android:backgroundTint="@color/gray"
+                            android:backgroundTint="@color/green"
                             android:background="@drawable/rounded_image_bg">
 
                             <TextView
@@ -442,7 +442,7 @@
                             android:layout_height="70dp"
                             android:layout_columnWeight="1"
                             android:layout_margin="6dp"
-                            android:backgroundTint="@color/gray"
+                            android:backgroundTint="@color/green"
                             android:background="@drawable/rounded_image_bg">
 
                             <TextView
@@ -461,7 +461,7 @@
                             android:layout_height="70dp"
                             android:layout_columnWeight="1"
                             android:layout_margin="6dp"
-                            android:backgroundTint="@color/gray"
+                            android:backgroundTint="@color/green"
                             android:background="@drawable/rounded_image_bg">
 
                             <TextView

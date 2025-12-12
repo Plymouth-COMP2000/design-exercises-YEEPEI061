@@ -158,4 +158,52 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public List<ReservationModel> getAllReservationsWithDateTime() {
+        List<ReservationModel> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_RESERVATION, null, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE));
+                String time = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TIME));
+
+                int year = Calendar.getInstance().get(Calendar.YEAR);
+                String fullDateTime = date + " " + year + " " + time;
+
+                long datetimeMillis = 0;
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy h:mm a", Locale.ENGLISH);
+                    Date parsed = sdf.parse(fullDateTime);
+                    datetimeMillis = parsed.getTime();
+                } catch (Exception ignored) {}
+
+                String status = calculateStatus(date, time);
+                ReservationModel res = new ReservationModel(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)),
+                        date,
+                        time,
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_GUEST_COUNT)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TABLE)),
+                        status,
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_REQUEST)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_NAME)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_CUSTOMER_USER_ID)),
+                        datetimeMillis
+                );
+
+
+                list.add(res);
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+
+
+
+
 }

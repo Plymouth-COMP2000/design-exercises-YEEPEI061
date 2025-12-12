@@ -11,6 +11,7 @@ public class ReservationModel {
     private String specialRequest;
     private String customerName;
     private String guestId;
+    private long dateTimeMillis;
 
     public ReservationModel(int id, String date, String time, int guestCount,
                             String tableName, String status, String specialRequest, String customerName, String guestId) {
@@ -23,6 +24,20 @@ public class ReservationModel {
         this.specialRequest = specialRequest;
         this.customerName = customerName;
         this.guestId = guestId;
+    }
+
+    public ReservationModel(int id, String date, String time, int guestCount,
+                            String tableName, String status, String specialRequest, String customerName, String guestId, long dateTimeMillis) {
+        this.id = id;
+        this.date = date;
+        this.time = time;
+        this.guestCount = guestCount;
+        this.tableName = tableName;
+        this.status = status;
+        this.specialRequest = specialRequest;
+        this.customerName = customerName;
+        this.guestId = guestId;
+        this.dateTimeMillis = dateTimeMillis;
     }
 
     public String getCustomerName() {
@@ -62,4 +77,8 @@ public class ReservationModel {
     }
 
     public String getGuestId() { return guestId; }
+
+    public long getDateTimeMillis() {
+        return dateTimeMillis;
+    }
 }

@@ -85,7 +85,12 @@ public class ChooseProfileActivity extends AppCompatActivity {
                             Bitmap processedBitmap = null;
                             try {
                                 Bitmap original = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                                processedBitmap = Bitmap.createScaledBitmap(original, 600, 600, true);
+                                int size = Math.min(original.getWidth(), original.getHeight());
+                                Bitmap cropped = Bitmap.createBitmap(original,
+                                        (original.getWidth() - size)/2,
+                                        (original.getHeight() - size)/2,
+                                        size, size);
+                                processedBitmap = Bitmap.createScaledBitmap(cropped, 600, 600, true);
 
                             } catch (Exception e) {
                                 e.printStackTrace();
