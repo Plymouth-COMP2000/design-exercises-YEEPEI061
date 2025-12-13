@@ -3,7 +3,9 @@ package com.example.softwareengineering;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -32,7 +35,7 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
     private int itemId = -1;
     private TextView uploadHint;
     private TextView uploadFormat;
-
+    private FrameLayout loadingOverlay;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -50,6 +53,7 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
         TextView titleText = findViewById(R.id.titleText);
         uploadHint = findViewById(R.id.uploadHint);
         uploadFormat = findViewById(R.id.uploadFormat);
+        loadingOverlay = findViewById(R.id.loadingOverlay);
 
         ImageButton backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(v -> finish());
@@ -162,10 +166,18 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
     }
 
     private void openGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
+        Intent intent;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } else {
+            intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+        }
         pickImageLauncher.launch(intent);
+
     }
+
 
     private final ActivityResultLauncher<Intent> pickImageLauncher =
             registerForActivityResult(
@@ -173,13 +185,30 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
                     result -> {
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                             selectedImageUri = result.getData().getData();
-                            uploadedImage.setImageURI(selectedImageUri);
 
-                            uploadHint.setVisibility(View.GONE);
-                            uploadFormat.setVisibility(View.GONE);
+                            // Grant temporary persistable permission
+                            final int takeFlags = result.getData().getFlags()
+                                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                            getContentResolver().takePersistableUriPermission(selectedImageUri, takeFlags);
+
+                            loadingOverlay.setVisibility(View.VISIBLE);
+                            uploadedImage.post(() -> {
+                                try {
+                                    uploadedImage.setImageURI(selectedImageUri);
+
+                                    uploadHint.setVisibility(View.GONE);
+                                    uploadFormat.setVisibility(View.GONE);
+                                } catch (Exception e) {
+                                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                                } finally {
+                                    loadingOverlay.setVisibility(View.GONE);
+                                }
+                            });
                         }
                     }
             );
+
+
 
     private void saveMenuItem(boolean isEdit, String category, Spinner typeSpinner) {
         String name = itemNameInput.getText().toString().trim();
@@ -194,8 +223,6 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
         if (isEdit) {
             item = new MenuItemModel(itemId, name, category, type, price, imageUriString, description);
 
-            Log.d("DEBUG", "Updating item with ID = " + item.getId());
-
             dbHelper.updateMenuItem(item);
             Toast.makeText(this, "Changes saved successfully!", Toast.LENGTH_SHORT).show();
         } else {
@@ -204,6 +231,7 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
             Toast.makeText(this, success ? "Item added successfully!" : "Failed to add item.", Toast.LENGTH_SHORT).show();
         }
 
+        setResult(RESULT_OK);
         finish();
     }
 }

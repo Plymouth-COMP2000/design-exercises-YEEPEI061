@@ -227,7 +227,7 @@
                         android:id="@+id/switchCancel"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:checked="false"
+                        android:checked="true"
                         tools:ignore="UseSwitchCompatOrMaterialXml" />
                 </LinearLayout>
             </LinearLayout>

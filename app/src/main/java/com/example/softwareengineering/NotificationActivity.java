@@ -57,6 +57,11 @@ public class NotificationActivity extends AppCompatActivity {
 
         loadNotifications();
 
+        for (NotificationModel n : notificationList) {
+            n.setDisplayed(true);
+        }
+
+
         adapter = new NotificationAdapter(notificationList);
         recyclerView.setAdapter(adapter);
 
@@ -105,6 +110,7 @@ public class NotificationActivity extends AppCompatActivity {
             for (NotificationModel n : allNotifications) {
 
                 if (n.getTimestamp() < signupTime) continue;
+
                 // Staff filters
                 if ("staff".equalsIgnoreCase(role)) {
                     if (n.isNewReservation()) {

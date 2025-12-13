@@ -35,7 +35,6 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
         String createTable =
                 "CREATE TABLE " + TABLE_RESERVATION + "(" +
                         COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -49,7 +48,6 @@ public class ReservationDatabaseHelper extends SQLiteOpenHelper {
                         ")";
 
         db.execSQL(createTable);
-//        addSampleData(db);
     }
 
 

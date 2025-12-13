@@ -110,7 +110,7 @@ public class GuestMenuActivity extends AppCompatActivity {
         long cancelEnabledTime = prefs.getLong("notif_cancel_enabledTime", 0);
 
         for (NotificationModel notif : guestNotifications) {
-            if (!notif.isUnread()) continue;
+            if (notif.isDisplayed()) continue;
             if (notif.getTimestamp() < signupTime) continue;
 
             // Only show cancel notifications if switch is on & notification was created after switch was enabled
@@ -118,8 +118,11 @@ public class GuestMenuActivity extends AppCompatActivity {
                 boolean allowed = isGuestNotificationAllowed();
                 if (!allowed || notif.getTimestamp() < cancelEnabledTime) continue;
             }
+            if (!notif.isUnread()) continue;
+
 
             checkPermissionAndNotify(notif);
+            notif.setDisplayed(true);
             updated = true;
         }
 

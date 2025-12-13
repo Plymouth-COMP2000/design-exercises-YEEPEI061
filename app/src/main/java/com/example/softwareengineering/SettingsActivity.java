@@ -49,7 +49,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         String prefName;
         if ("staff".equalsIgnoreCase(role)) {
-            prefName = "NotificationPrefs_staff_" + userId; // note staff_
+            prefName = "NotificationPrefs_staff_" + userId;
         } else {
             prefName = "NotificationPrefs_" + userId;
         }
@@ -81,6 +81,8 @@ public class SettingsActivity extends AppCompatActivity {
             prefOne.setText("New Reservations");
             prefTwo.setText("Reservation Changes");
             prefThree.setText("Cancellations");
+        }else{
+            prefOne.setText("Reservations Creation");
         }
 
         Button logoutButton = findViewById(R.id.logoutButton);

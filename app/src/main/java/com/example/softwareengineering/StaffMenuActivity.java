@@ -1,5 +1,7 @@
 package com.example.softwareengineering;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -78,7 +80,8 @@ public class StaffMenuActivity extends AppCompatActivity {
             Intent intent = new Intent(this, StaffMenuItemFormActivity.class);
             intent.putExtra("mode", "add");
             intent.putExtra("category", currentCategory);
-            startActivity(intent);
+//            startActivity(intent);
+            addItemLauncher.launch(intent);
         });
     }
 
@@ -108,6 +111,18 @@ public class StaffMenuActivity extends AppCompatActivity {
         }
     }
 
+    private final ActivityResultLauncher<Intent> addItemLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if(result.getResultCode() == RESULT_OK){
+                            // Reload the fragment to fetch updated data
+                            loadFragment(StaffMenuListFragment.newInstance(currentCategory));
+                        }
+                    }
+            );
+
+
     private void showPendingStaffNotifications() {
         SharedPreferences sp = getSharedPreferences("Notifications_staff", MODE_PRIVATE);
         String json = sp.getString("list", "[]");
@@ -126,8 +141,7 @@ public class StaffMenuActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("NotificationPrefs_staff_" + staffId, MODE_PRIVATE);
 
         for (NotificationModel notif : staffNotifications) {
-
-            if (!notif.isUnread()) continue;
+            if (notif.isDisplayed()) continue;
             if (notif.getTimestamp() < signupTime) continue;
 
             if (notif.isNewReservation()) {
@@ -148,8 +162,10 @@ public class StaffMenuActivity extends AppCompatActivity {
                 if (!allowed || notif.getTimestamp() < enabledTime) continue;
             }
 
-            // Show only notifications created after the switch was ON
+            if (!notif.isUnread()) continue;
+
             checkPermissionAndNotify(notif);
+            notif.setDisplayed(true);
             updated = true;
         }
 

@@ -436,12 +436,11 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                         String prefKey = isEdit ? "notif_update" : "notif_new";
 
                         if (isNotificationAllowed(prefKey)) {
-
                             NotificationModel guestNotif = new NotificationModel(
                                     isEdit ? "Reservation Modified" : "Reservation Successful",
                                     isEdit ?
-                                            "Your reservation has been successfully changed to " + guests + " people at " + time + "." :
-                                            "Your reservation for " + guests + " people on " + date + " at " + time + " is successfully reserved.",
+                                            "Your reservation has been successfully changed to " + guests + " people at " + time + " on " + date + " (" + tableName + ").":
+                                            "Your reservation for " + guests + " people on " + date + " at " + time + " is successfully reserved (" + tableName + ").",
                                     currentTime,
                                     true,
                                     isEdit ? R.drawable.ic_modify : R.drawable.ic_check_circle,
@@ -454,8 +453,8 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                         }
 
                         String staffMessage = isEdit ?
-                                username + " updated a reservation for " + guests + " people at " + time + " on " + date + "." :
-                                username + " booked a reservation for " + guests + " people at " + time + " on " + date + ".";
+                                username + " updated a reservation for " + guests + " people at " + time + " on " + date + " (" + tableName + ").":
+                                username + " booked a reservation for " + guests + " people at " + time + " on " + date + " (" + tableName + ").";
 
                         NotificationModel staffNotif = new NotificationModel(
                                 isEdit ? "Reservation Updated" : "New Reservation",
@@ -484,7 +483,7 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
         String userId = userSession.getString("userId", "");
 
-        SharedPreferences sp = getSharedPreferences("Notifications_" + userId, MODE_PRIVATE); // separate by user
+        SharedPreferences sp = getSharedPreferences("Notifications_" + userId, MODE_PRIVATE);
         String json = sp.getString("list", "[]");
 
         Type type = new TypeToken<List<NotificationModel>>() {}.getType();
@@ -511,6 +510,7 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         } else {
             showNotification(notif);
         }
+
     }
 
     private void showNotification(NotificationModel notif) {
@@ -541,6 +541,8 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         manager.notify((int) System.currentTimeMillis(), builder.build());
+        notif.setDisplayed(true);
+        saveNotificationImmediate(notif);
     }
 
     @Override
@@ -657,6 +659,30 @@ public class GuestReservationFormActivity extends AppCompatActivity {
             tableMap.put(selectedTable, TableStatus.SELECTED);
         }
     }
+
+
+    private void saveNotificationImmediate(NotificationModel notif) {
+        SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userId = userSession.getString("userId", "");
+        String role = userSession.getString("role", "guest");
+
+        String prefName = "Notifications_" + userId;
+        SharedPreferences sp = getSharedPreferences(prefName, MODE_PRIVATE);
+        String json = sp.getString("list", "[]");
+
+        Type type = new TypeToken<List<NotificationModel>>() {}.getType();
+        List<NotificationModel> notifications = new Gson().fromJson(json, type);
+
+        for (NotificationModel n : notifications) {
+            if (n.getTimestamp() == notif.getTimestamp() && n.getTitle().equals(notif.getTitle())) {
+                n.setDisplayed(true);
+                break;
+            }
+        }
+
+        sp.edit().putString("list", new Gson().toJson(notifications)).apply();
+    }
+
 
 
 

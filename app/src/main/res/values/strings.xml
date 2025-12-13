@@ -89,6 +89,8 @@
     <string name="profile">Profile</string>
     <string name="profilePicture">Profile Picture</string>
     <string name="editProfile">Edit Profile</string>
+    <string name="changePhoto">Change Photo</string>
+    <string name="togglePassword">Toggle Password</string>
 
     <string-array name="food_types">
         <item>Appetizer</item>

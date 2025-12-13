@@ -74,9 +74,9 @@ public class SignUpActivity extends AppCompatActivity {
             String selectedRole = tickStaff.getVisibility() == View.VISIBLE ? "staff" : "guest";
 
             // Validate required fields
-            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
+            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || username.isEmpty() ||
                     password.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(SignUpActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(SignUpActivity.this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -108,7 +108,7 @@ public class SignUpActivity extends AppCompatActivity {
                 jsonBody.put("lastname", lastName);
                 jsonBody.put("email", email);
                 jsonBody.put("contact", contact);
-                jsonBody.put("usertype", selectedRole); // guest or staff
+                jsonBody.put("usertype", selectedRole);
 
                 String url = BASE_URL + "create_user/" + STUDENT_ID;
 
@@ -134,20 +134,26 @@ public class SignUpActivity extends AppCompatActivity {
                         error -> {
                             loadingOverlay.setVisibility(View.GONE);
                             String errorMsg = "Error creating user";
-                            if (error.networkResponse != null) {
-                                errorMsg += " (" + error.networkResponse.statusCode + ")";
 
-                                try {
-                                    String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
-                                    errorMsg += "\n" + responseBody;
-                                } catch (Exception e) {
-                                    Log.e("SignUpError", "Exception occurred", e);
+                            if (error.networkResponse != null) {
+                                int statusCode = error.networkResponse.statusCode;
+
+                                if (statusCode == 400) {
+                                    // Customize message for user already exists
+                                    errorMsg = "User already exists. Please try logging in.";
+                                } else if (statusCode == 500) {
+                                    errorMsg = "Server error. Please try again later.";
+                                } else {
+                                    errorMsg += " (" + statusCode + ")";
                                 }
+                            } else {
+                                errorMsg += " (No network response)";
                             }
 
                             Toast.makeText(SignUpActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-
                         }
+
+
                 );
 
                 Volley.newRequestQueue(SignUpActivity.this).add(request);

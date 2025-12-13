@@ -14,8 +14,7 @@ import java.util.List;
 public class MenuDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "staff_menu.db";
-    private static final int DB_VERSION = 4;
-
+    private static final int DB_VERSION = 6;
     private static final String TABLE_MENU = "menu";
     private static final String COL_ID = "id";
     private static final String COL_NAME = "name";
@@ -37,7 +36,7 @@ public class MenuDatabaseHelper extends SQLiteOpenHelper {
                 COL_TYPE + " TEXT, " +
                 COL_PRICE + " REAL, " +
                 COL_IMAGE + " INTEGER, " +
-                "description TEXT)"; // new column
+                "description TEXT)";
         db.execSQL(createTable);
 
         addSampleData(db);
@@ -67,7 +66,7 @@ public class MenuDatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Update existing item
-    public boolean updateMenuItem(MenuItemModel item) {
+    public void updateMenuItem(MenuItemModel item) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COL_NAME, item.getName());
@@ -79,7 +78,6 @@ public class MenuDatabaseHelper extends SQLiteOpenHelper {
 
         int rowsAffected = db.update(TABLE_MENU, values, "id=?", new String[]{String.valueOf(item.getId())});
         db.close();
-        return rowsAffected > 0;
     }
 
 

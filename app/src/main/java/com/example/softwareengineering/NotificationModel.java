@@ -9,6 +9,7 @@ public class NotificationModel {
     private final int icon;
     private final int iconColor;
     private final int iconBgColor;
+    private boolean displayed = false;
 
     public NotificationModel(String title, String message, long timestamp, boolean unread, int icon, int iconColor, int iconBgColor) {
         this.title = title;
@@ -62,6 +63,13 @@ public class NotificationModel {
 
     public boolean isCancelReservation() {
         return title.equals("Reservation Cancelled");
+    }
+
+    public boolean isDisplayed() {
+        return displayed;
+    }
+    public void setDisplayed(boolean displayed) {
+        this.displayed = displayed;
     }
 
 }
