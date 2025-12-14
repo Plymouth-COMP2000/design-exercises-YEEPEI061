@@ -93,7 +93,9 @@ public class NotificationActivity extends AppCompatActivity {
         String userId = userSession.getString("userId", "");
         String role = userSession.getString("role", "guest");
 
-        long signupTime = userSession.getLong("signupTime", 0);
+        UserSignupDbHelper dbHelper = new UserSignupDbHelper(this);
+        long signupTime = dbHelper.getSignupTime(userId);
+
         String prefName = "guest".equalsIgnoreCase(role) ? "Notifications_" + userId : "Notifications_staff";
         SharedPreferences sp = getSharedPreferences(prefName, MODE_PRIVATE);
         String json = sp.getString("list", "[]");

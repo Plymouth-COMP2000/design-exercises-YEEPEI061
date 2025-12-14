@@ -33,7 +33,6 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-
         EditText passwordInput = findViewById(R.id.passwordInput);
         ImageView togglePassword = findViewById(R.id.togglePassword);
         EditText confirmPasswordInput = findViewById(R.id.confirmPasswordInput);
@@ -65,7 +64,6 @@ public class SignUpActivity extends AppCompatActivity {
             String confirmPassword = confirmPasswordInput.getText().toString().trim();
             String selectedRole = fromStaffManagement ? "staff" : "guest";
 
-
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || username.isEmpty() ||
                     password.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(SignUpActivity.this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
@@ -87,8 +85,8 @@ public class SignUpActivity extends AppCompatActivity {
                 return;
             }
 
-
             loadingOverlay.setVisibility(View.VISIBLE);
+            long signupTime = System.currentTimeMillis();
 
             try {
                 JSONObject jsonBody = new JSONObject();
@@ -100,35 +98,68 @@ public class SignUpActivity extends AppCompatActivity {
                 jsonBody.put("contact", contact);
                 jsonBody.put("usertype", selectedRole);
 
-                String url = BASE_URL + "create_user/" + STUDENT_ID;
+                String createUserUrl = BASE_URL + "create_user/" + STUDENT_ID;
 
-                JsonObjectRequest request = new JsonObjectRequest(
+                // Step 1: Create the user
+                JsonObjectRequest createRequest = new JsonObjectRequest(
                         Request.Method.POST,
-                        url,
+                        createUserUrl,
                         jsonBody,
                         response -> {
-                            loadingOverlay.setVisibility(View.GONE);
-                            if (fromStaffManagement) {
-                                Toast.makeText(SignUpActivity.this, "Account created! ", Toast.LENGTH_SHORT).show();
-                            }else{
-                                Toast.makeText(SignUpActivity.this, "Account created! Please choose your profile", Toast.LENGTH_SHORT).show();
-                            }
+                            // Step 2: GET the user to obtain _id
+                            String readUserUrl = BASE_URL + "read_user/" + STUDENT_ID + "/" + username;
 
-                            long signupTime = System.currentTimeMillis();
-                            SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = session.edit();
-                            editor.putString("username", username);
-                            editor.putString("role", selectedRole);
-                            editor.putLong("signupTime", signupTime);
-                            editor.apply();
+                            JsonObjectRequest readRequest = new JsonObjectRequest(
+                                    Request.Method.GET,
+                                    readUserUrl,
+                                    null,
+                                    readResponse -> {
+                                        try {
+                                            if (readResponse.has("user")) {
+                                                JSONObject user = readResponse.getJSONObject("user");
+                                                String userId = user.getString("_id");
 
-                            if (fromStaffManagement) {
-                                startActivity(new Intent(SignUpActivity.this, SettingsActivity.class));
-                            }else{
-                                startActivity(new Intent(SignUpActivity.this, ChooseProfileActivity.class));
-                            }
+                                                UserSignupDbHelper dbHelper = new UserSignupDbHelper(SignUpActivity.this);
+                                                dbHelper.saveSignupTime(userId, signupTime);
 
-                            finish();
+                                                loadingOverlay.setVisibility(View.GONE);
+
+                                                if (fromStaffManagement) {
+                                                    Toast.makeText(SignUpActivity.this, "Account created!", Toast.LENGTH_SHORT).show();
+                                                    startActivity(new Intent(SignUpActivity.this, SettingsActivity.class));
+                                                } else {
+                                                    Toast.makeText(SignUpActivity.this, "Account created! Please choose your profile", Toast.LENGTH_SHORT).show();
+
+                                                    SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
+                                                    SharedPreferences.Editor editor = session.edit();
+                                                    editor.putString("username", username);
+                                                    editor.putString("role", selectedRole);
+                                                    editor.putLong("signupTime", signupTime);
+                                                    editor.apply();
+
+                                                    startActivity(new Intent(SignUpActivity.this, ChooseProfileActivity.class));
+                                                }
+
+                                                finish();
+                                            } else {
+                                                loadingOverlay.setVisibility(View.GONE);
+                                                Toast.makeText(SignUpActivity.this, "Failed to get user ID", Toast.LENGTH_LONG).show();
+                                            }
+                                        } catch (Exception e) {
+                                            loadingOverlay.setVisibility(View.GONE);
+                                            Log.e("SignUpActivity", "Error parsing user after creation", e);
+                                            Toast.makeText(SignUpActivity.this, "Unexpected error", Toast.LENGTH_SHORT).show();
+                                        }
+                                    },
+                                    error -> {
+                                        loadingOverlay.setVisibility(View.GONE);
+                                        Toast.makeText(SignUpActivity.this, "Failed to retrieve user ID", Toast.LENGTH_LONG).show();
+                                        Log.e("SignUpActivity", "Read user error", error);
+                                    }
+                            );
+
+                            Volley.newRequestQueue(SignUpActivity.this).add(readRequest);
+
                         },
                         error -> {
                             loadingOverlay.setVisibility(View.GONE);
@@ -138,7 +169,6 @@ public class SignUpActivity extends AppCompatActivity {
                                 int statusCode = error.networkResponse.statusCode;
 
                                 if (statusCode == 400) {
-                                    // Customize message for user already exists
                                     errorMsg = "User already exists. Please try logging in.";
                                 } else if (statusCode == 500) {
                                     errorMsg = "Server error. Please try again later.";
@@ -153,7 +183,7 @@ public class SignUpActivity extends AppCompatActivity {
                         }
                 );
 
-                Volley.newRequestQueue(SignUpActivity.this).add(request);
+                Volley.newRequestQueue(SignUpActivity.this).add(createRequest);
 
             } catch (Exception e) {
                 loadingOverlay.setVisibility(View.GONE);
@@ -161,6 +191,7 @@ public class SignUpActivity extends AppCompatActivity {
                 Toast.makeText(SignUpActivity.this, "Unexpected error", Toast.LENGTH_SHORT).show();
             }
         });
+
 
         TextView loginText = findViewById(R.id.loginText);
         TextView alreadyAccountText = findViewById(R.id.alreadyAccountText);

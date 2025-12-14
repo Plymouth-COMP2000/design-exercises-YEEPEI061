@@ -111,7 +111,17 @@ public class EditProfileActivity extends AppCompatActivity {
         fetchUserData();
 
         Button saveButton = findViewById(R.id.saveButton);
-        saveButton.setOnClickListener(v -> saveChanges());
+        saveButton.setOnClickListener(v -> {
+            PopupHelper.showPopup(
+                    this,
+                    R.drawable.ic_info,
+                    getResources().getColor(R.color.my_primary, null),
+                    "Save Changes",
+                    "Are you sure you want to save changes?",
+                    this::saveChanges
+            );
+        });
+
     }
 
     private void setupGalleryLauncher() {
@@ -315,7 +325,6 @@ public class EditProfileActivity extends AppCompatActivity {
                         }
 
                         profileEditor.apply();
-
 
                         Toast.makeText(this, "Changes saved!", Toast.LENGTH_SHORT).show();
                         loadingOverlay.setVisibility(View.GONE);
