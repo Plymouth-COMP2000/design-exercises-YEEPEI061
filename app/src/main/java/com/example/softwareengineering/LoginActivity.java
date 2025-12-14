@@ -152,6 +152,10 @@ public class LoginActivity extends AppCompatActivity {
         TextView signUpText = findViewById(R.id.signUpText);
 
         signUpText.setOnClickListener(v -> {
+            SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("role", "guest");
+
             Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
             startActivity(intent);
         });

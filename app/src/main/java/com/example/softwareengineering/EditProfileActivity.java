@@ -43,6 +43,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private EditText passwordInput, confirmPasswordInput, firstNameInput, lastNameInput,
             usernameInput, emailInput, contactInput;
+    private String actualFirstName, actualLastName, actualUsername, actualEmail, actualContact;
 
     private FrameLayout loadingOverlay;
     private ImageView profileImage;
@@ -75,7 +76,7 @@ public class EditProfileActivity extends AppCompatActivity {
         if (savedPath != null) {
             setProfileImageFromFile(savedPath);
         } else {
-            String gender = profilePrefs.getString("profile", "boy");
+            String gender = profilePrefs.getString("profileGender_" + userId, "boy");
             profileImage.setImageResource(
                     "boy".equals(gender) ? R.drawable.sample_profile_boy : R.drawable.sample_profile
             );
@@ -118,15 +119,12 @@ public class EditProfileActivity extends AppCompatActivity {
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
 
-                    Log.d("PROFILE_DEBUG", "Gallery resultCode = " + result.getResultCode());
 
                     if (result.getResultCode() == RESULT_OK && result.getData() != null) {
 
                         Uri imageUri = result.getData().getData();
-                        Log.d("PROFILE_DEBUG", "Received URI = " + imageUri);
 
                         if (imageUri == null) {
-                            Log.e("PROFILE_DEBUG", "imageUri is NULL");
                             Toast.makeText(this, "Image URI is null", Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -136,16 +134,13 @@ public class EditProfileActivity extends AppCompatActivity {
                         InputStream inputStream;
                         try {
                             inputStream = getContentResolver().openInputStream(imageUri);
-                            Log.d("PROFILE_DEBUG", "InputStream opened = " + (inputStream != null));
                         } catch (Exception e) {
-                            Log.e("PROFILE_DEBUG", "Error opening InputStream", e);
                             Toast.makeText(this, "Error getting selected image", Toast.LENGTH_SHORT).show();
                             loadingOverlay.setVisibility(View.GONE);
                             return;
                         }
 
                         if (inputStream == null) {
-                            Log.e("PROFILE_DEBUG", "InputStream is NULL after openInputStream()");
                             Toast.makeText(this, "Failed to read image", Toast.LENGTH_SHORT).show();
                             loadingOverlay.setVisibility(View.GONE);
                             return;
@@ -154,11 +149,9 @@ public class EditProfileActivity extends AppCompatActivity {
                         InputStream finalStream = inputStream;
 
                         new Thread(() -> {
-                            Log.d("PROFILE_DEBUG", "Saving image in background...");
                             tempProfileImagePath =
                                     saveImageToInternalStorage(finalStream, "temp_" + userId);
 
-                            Log.d("PROFILE_DEBUG", "Saved image path = " + tempProfileImagePath);
 
                             runOnUiThread(() -> {
                                 if (tempProfileImagePath != null) {
@@ -170,7 +163,6 @@ public class EditProfileActivity extends AppCompatActivity {
                             });
                         }).start();
                     } else {
-                        Log.e("PROFILE_DEBUG", "Gallery result NOT OK or data NULL");
                     }
                 }
         );
@@ -212,20 +204,17 @@ public class EditProfileActivity extends AppCompatActivity {
                 totalBytes += len;
             }
 
-            Log.d("PROFILE_DEBUG", "Total bytes written = " + totalBytes);
 
             outputStream.close();
             inputStream.close();
 
             if (totalBytes == 0) {
-                Log.e("PROFILE_DEBUG", "ZERO BYTES WRITTEN — image empty!");
                 return null;
             }
 
             return file.getAbsolutePath();
 
         } catch (Exception e) {
-            Log.e("PROFILE_DEBUG", "saveImageToInternalStorage() ERROR", e);
             return null;
         }
     }
@@ -243,12 +232,18 @@ public class EditProfileActivity extends AppCompatActivity {
                     try {
                         if (response.has("user")) {
                             JSONObject user = response.getJSONObject("user");
-                            firstNameInput.setText(user.getString("firstname"));
-                            lastNameInput.setText(user.getString("lastname"));
-                            usernameInput.setText(user.getString("username"));
-                            emailInput.setText(user.getString("email"));
-                            contactInput.setText(user.getString("contact"));
+                            actualFirstName = user.getString("firstname");
+                            actualLastName = user.getString("lastname");
+                            actualUsername = user.getString("username");
+                            actualEmail = user.getString("email");
+                            actualContact = user.getString("contact");
                             actualPassword = user.getString("password");
+
+                            firstNameInput.setText(actualFirstName);
+                            lastNameInput.setText(actualLastName);
+                            usernameInput.setText(actualUsername);
+                            emailInput.setText(actualEmail);
+                            contactInput.setText(actualContact);
                         }
                     } catch (Exception ignored) {
                     } finally {
@@ -273,20 +268,28 @@ public class EditProfileActivity extends AppCompatActivity {
         String password = passwordInput.getText().toString().trim();
         String confirmPassword = confirmPasswordInput.getText().toString().trim();
 
-        if (!password.isEmpty() && !password.equals(confirmPassword)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-            return;
+        if (!password.isEmpty()) {
+            if (password.length() < 6) {
+                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (!password.equals(confirmPassword)) {
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
         loadingOverlay.setVisibility(View.VISIBLE);
 
         try {
             JSONObject jsonBody = new JSONObject();
-            jsonBody.put("firstname", firstName);
-            jsonBody.put("lastname", lastName);
-            jsonBody.put("username", newUsername);
-            jsonBody.put("email", email);
-            jsonBody.put("contact", contact);
+            jsonBody.put("firstname", firstName.isEmpty() ? actualFirstName : firstName);
+            jsonBody.put("lastname", lastName.isEmpty() ? actualLastName : lastName);
+            String finalUsername = newUsername.isEmpty() ? actualUsername : newUsername;
+            jsonBody.put("username", finalUsername);
+            jsonBody.put("email", email.isEmpty() ? actualEmail : email);
+            jsonBody.put("contact", contact.isEmpty() ? actualContact : contact);
             jsonBody.put("password", password.isEmpty() ? actualPassword : password);
 
             SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
@@ -301,7 +304,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     jsonBody,
                     response -> {
                         SharedPreferences.Editor sessionEditor = prefs.edit();
-                        sessionEditor.putString("username", newUsername);
+                        sessionEditor.putString("username", finalUsername);
                         sessionEditor.apply();
 
                         SharedPreferences.Editor profileEditor = profilePrefs.edit();

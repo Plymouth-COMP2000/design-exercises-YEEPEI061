@@ -30,6 +30,7 @@ public class NotificationActivity extends AppCompatActivity {
     List<NotificationModel> notificationList = new ArrayList<>();
     private final boolean showUnreadOnly = false;
 
+
     TextView markAllRead;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,6 @@ public class NotificationActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         refreshNotifications(false);
-
 
         allButton.setOnClickListener(v -> {
             refreshNotifications(false);
@@ -139,7 +139,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
 
-    private void saveNotifications() {
+    void saveNotifications() {
         SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
         String userId = userSession.getString("userId", "");
         String role = userSession.getString("role", "guest");

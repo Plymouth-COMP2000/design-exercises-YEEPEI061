@@ -38,16 +38,12 @@ public class StaffMenuAdapter extends RecyclerView.Adapter<StaffMenuAdapter.Menu
         return new MenuViewHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     @Override
     public void onBindViewHolder(@NonNull MenuViewHolder holder, int position) {
         MenuItemModel item = menuList.get(position);
         holder.itemName.setText(item.getName());
-        double price = item.getPrice();
-        @SuppressLint("DefaultLocale") String priceText = (price % 1 == 0)
-                ? String.format("%d", (int) price)
-                : String.format("%.2f", price);
-        holder.itemPrice.setText("RM " + priceText);
+        holder.itemPrice.setText("RM " + String.format("%.2f", item.getPrice()));
         holder.itemCategory.setText(item.getType());
         String imageUriString = item.getImageUri();
         if (imageUriString != null && !imageUriString.isEmpty()) {

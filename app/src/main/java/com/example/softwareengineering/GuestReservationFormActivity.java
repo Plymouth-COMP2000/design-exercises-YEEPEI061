@@ -392,8 +392,35 @@ public class GuestReservationFormActivity extends AppCompatActivity {
                 .getResourceEntryName(selectedTable.getId())
                 .replace("tableT", "");
         String date = dateInput.getText().toString().trim();
+
         String time = timeInput.getText().toString().trim();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf = new SimpleDateFormat("h:mm a"); // matches "9:00 PM", "10:00 AM"
+        try {
+            Date d = sdf.parse(time);
+
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat hourFormat = new SimpleDateFormat("H");   // 24-hour hour
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat minuteFormat = new SimpleDateFormat("m"); // minute
+            assert d != null;
+            int hour = Integer.parseInt(hourFormat.format(d));
+            int minute = Integer.parseInt(minuteFormat.format(d));
+
+            // 10:00 to 21:00 inclusive
+            if (hour < 10 || hour > 21 || (hour == 21 && minute > 0)) {
+                Toast.makeText(this, "Reservation time must be between 10:00 AM and 9:00 PM", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+        } catch (Exception e) {
+            Toast.makeText(this, "Invalid time format", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         int guests = Integer.parseInt(guestCountInput.getText().toString().trim());
+        if (guests < 1 || guests > 10) {
+            Toast.makeText(this, "Number of guests must be between 1 and 10", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String request = requestInput.getText().toString().trim();
 
         ReservationDatabaseHelper db = new ReservationDatabaseHelper(this);
@@ -660,11 +687,9 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         }
     }
 
-
     private void saveNotificationImmediate(NotificationModel notif) {
         SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
         String userId = userSession.getString("userId", "");
-        String role = userSession.getString("role", "guest");
 
         String prefName = "Notifications_" + userId;
         SharedPreferences sp = getSharedPreferences(prefName, MODE_PRIVATE);
@@ -682,9 +707,5 @@ public class GuestReservationFormActivity extends AppCompatActivity {
 
         sp.edit().putString("list", new Gson().toJson(notifications)).apply();
     }
-
-
-
-
 
 }

@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,33 +18,21 @@ import android.util.Log;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
 import org.json.JSONObject;
 
-import java.nio.charset.StandardCharsets;
-
 public class SignUpActivity extends AppCompatActivity {
 
-    CardView staffRole, guestRole;
-    ImageView tickStaff, tickGuest;
     private static final String BASE_URL = "http://10.240.72.69/comp2000/coursework/";
     private static final String STUDENT_ID = "bsse2506028";
     private FrameLayout loadingOverlay;
 
+    @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        staffRole = findViewById(R.id.staffRole);
-        guestRole = findViewById(R.id.guestRole);
-        tickStaff = findViewById(R.id.tickStaff);
-        tickGuest = findViewById(R.id.tickGuest);
-
-        staffRole.setOnClickListener(v -> selectRole(true));
-        guestRole.setOnClickListener(v -> selectRole(false));
 
         EditText passwordInput = findViewById(R.id.passwordInput);
         ImageView togglePassword = findViewById(R.id.togglePassword);
@@ -54,6 +43,9 @@ public class SignUpActivity extends AppCompatActivity {
         setupPasswordToggle(confirmPasswordInput, toggleConfirmPassword);
 
         loadingOverlay = findViewById(R.id.loadingOverlay);
+
+        ImageButton backButton = findViewById(R.id.backButton);
+        boolean fromStaffManagement = getIntent().getBooleanExtra("fromStaffManagement", false);
 
         // Sign up button
         Button signupButton = findViewById(R.id.signupButton);
@@ -71,32 +63,30 @@ public class SignUpActivity extends AppCompatActivity {
             String contact = contactInput.getText().toString().trim();
             String password = passwordInput.getText().toString().trim();
             String confirmPassword = confirmPasswordInput.getText().toString().trim();
-            String selectedRole = tickStaff.getVisibility() == View.VISIBLE ? "staff" : "guest";
+            String selectedRole = fromStaffManagement ? "staff" : "guest";
 
-            // Validate required fields
+
             if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || username.isEmpty() ||
                     password.isEmpty() || confirmPassword.isEmpty()) {
                 Toast.makeText(SignUpActivity.this, "Please fill in all required fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Validate email format
             if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                 Toast.makeText(SignUpActivity.this, "Please enter a valid email address", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Validate password match
+            if (password.length() < 6) {
+                Toast.makeText(SignUpActivity.this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (!password.equals(confirmPassword)) {
                 Toast.makeText(SignUpActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Validate role selection
-            if (tickStaff.getVisibility() != View.VISIBLE && tickGuest.getVisibility() != View.VISIBLE) {
-                Toast.makeText(SignUpActivity.this, "Please select a role first", Toast.LENGTH_SHORT).show();
-                return;
-            }
 
             loadingOverlay.setVisibility(View.VISIBLE);
 
@@ -118,7 +108,11 @@ public class SignUpActivity extends AppCompatActivity {
                         jsonBody,
                         response -> {
                             loadingOverlay.setVisibility(View.GONE);
-                            Toast.makeText(SignUpActivity.this, "Account created! Please choose your profile", Toast.LENGTH_SHORT).show();
+                            if (fromStaffManagement) {
+                                Toast.makeText(SignUpActivity.this, "Account created! ", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(SignUpActivity.this, "Account created! Please choose your profile", Toast.LENGTH_SHORT).show();
+                            }
 
                             long signupTime = System.currentTimeMillis();
                             SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
@@ -128,7 +122,12 @@ public class SignUpActivity extends AppCompatActivity {
                             editor.putLong("signupTime", signupTime);
                             editor.apply();
 
-                            startActivity(new Intent(SignUpActivity.this, ChooseProfileActivity.class));
+                            if (fromStaffManagement) {
+                                startActivity(new Intent(SignUpActivity.this, SettingsActivity.class));
+                            }else{
+                                startActivity(new Intent(SignUpActivity.this, ChooseProfileActivity.class));
+                            }
+
                             finish();
                         },
                         error -> {
@@ -152,8 +151,6 @@ public class SignUpActivity extends AppCompatActivity {
 
                             Toast.makeText(SignUpActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                         }
-
-
                 );
 
                 Volley.newRequestQueue(SignUpActivity.this).add(request);
@@ -165,39 +162,25 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        // Sign up
         TextView loginText = findViewById(R.id.loginText);
+        TextView alreadyAccountText = findViewById(R.id.alreadyAccountText);
+        TextView signupSubtitle = findViewById(R.id.signupSubtitle);
+
+
+        if (fromStaffManagement) {
+            loginText.setVisibility(View.GONE);
+            alreadyAccountText.setVisibility(View.GONE);
+            signupSubtitle.setText("Staff account registration");
+            signupButton.setText("Create");
+            backButton.setVisibility(View.VISIBLE);
+            backButton.setOnClickListener(v -> finish());
+        }
 
         loginText.setOnClickListener(v -> {
             Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
             startActivity(intent);
         });
 
-    }
-
-    private void selectRole(boolean isStaff) {
-        SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-
-        if (isStaff) {
-            tickStaff.setVisibility(View.VISIBLE);
-            tickGuest.setVisibility(View.GONE);
-
-            staffRole.setCardBackgroundColor(getColor(R.color.my_tertiary));
-            guestRole.setCardBackgroundColor(getColor(R.color.white));
-
-            editor.putString("role", "staff");
-        } else {
-            tickGuest.setVisibility(View.VISIBLE);
-            tickStaff.setVisibility(View.GONE);
-
-            guestRole.setCardBackgroundColor(getColor(R.color.my_tertiary));
-            staffRole.setCardBackgroundColor(getColor(R.color.white));
-
-            editor.putString("role", "guest");
-        }
-
-        editor.apply();
     }
 
     @SuppressLint("ClickableViewAccessibility")

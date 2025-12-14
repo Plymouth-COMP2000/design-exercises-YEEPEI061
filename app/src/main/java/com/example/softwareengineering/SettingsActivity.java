@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +43,14 @@ public class SettingsActivity extends AppCompatActivity {
         String userId = userSession.getString("userId", "");
 
         usernameText.setText(username);
+
+        TextView textStaffManagement = findViewById(R.id.textStaffManagement);
+        Button btnAddStaff = findViewById(R.id.btnAddStaff);
+
+        if ("guest".equals(role)) {
+            textStaffManagement.setVisibility(View.GONE);
+            btnAddStaff.setVisibility(View.GONE);
+        }
 
         @SuppressLint("UseSwitchCompatOrMaterialCode") Switch switchNew = findViewById(R.id.switchNew);
         @SuppressLint("UseSwitchCompatOrMaterialCode") Switch switchUpdate = findViewById(R.id.switchUpdate);
@@ -103,6 +112,12 @@ public class SettingsActivity extends AppCompatActivity {
             startActivity(intent);
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         });
+
+        btnAddStaff.setOnClickListener(v -> {
+            Intent intent = new Intent(SettingsActivity.this, SignUpActivity.class);
+            intent.putExtra("fromStaffManagement", true);
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -117,14 +132,14 @@ public class SettingsActivity extends AppCompatActivity {
 
         SharedPreferences sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE);
         SharedPreferences profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
-        String USER_ID = sharedPref.getString("userId", "");
+        String userId = sharedPref.getString("userId", "");
 
-        String savedPath = profilePrefs.getString("profileImagePath_" + USER_ID, null);
+        String savedPath = profilePrefs.getString("profileImagePath_" + userId, null);
         if (savedPath != null) {
             Bitmap bitmap = BitmapFactory.decodeFile(savedPath);
             if (bitmap != null) profileImage.setImageBitmap(bitmap);
         } else {
-            String gender = profilePrefs.getString("profile", "boy");
+            String gender = profilePrefs.getString("profileGender_" + userId, "boy");
             profileImage.setImageResource(
                     "boy".equals(gender) ? R.drawable.sample_profile_boy : R.drawable.sample_profile
             );

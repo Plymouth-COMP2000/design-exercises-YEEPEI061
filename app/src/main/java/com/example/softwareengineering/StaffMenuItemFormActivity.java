@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -64,7 +63,7 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
         itemId = intent.getIntExtra("id", -1);
         String category = intent.getStringExtra("category");
 
-        String[] foodTypes = {"Appetizer", "Main", "Dessert"};
+        String[] foodTypes = {"Appetizer", "Main Course", "Dessert"};
         String[] drinkTypes = {"Coffee", "Tea", "Cocktail"};
         String[] typesToUse = "food".equalsIgnoreCase(category) ? foodTypes : drinkTypes;
 
@@ -186,10 +185,9 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                             selectedImageUri = result.getData().getData();
 
-                            // Grant temporary persistable permission
-                            final int takeFlags = result.getData().getFlags()
-                                    & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                            getContentResolver().takePersistableUriPermission(selectedImageUri, takeFlags);
+//                            // Grant temporary persistable permission
+                            getContentResolver().takePersistableUriPermission(selectedImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
 
                             loadingOverlay.setVisibility(View.VISIBLE);
                             uploadedImage.post(() -> {
@@ -217,8 +215,19 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
         double price = Double.parseDouble(priceInput.getText().toString().trim());
         String imageUriString = selectedImageUri != null ? selectedImageUri.toString() : "";
 
-        MenuItemModel item;
         MenuDatabaseHelper dbHelper = new MenuDatabaseHelper(this);
+
+        boolean nameExists = dbHelper.isMenuNameExists(
+                name,
+                isEdit ? itemId : null
+        );
+
+        if (nameExists) {
+            Toast.makeText(this, "Item name already exists", Toast.LENGTH_SHORT).show();
+            return; // stop saving
+        }
+
+        MenuItemModel item;
 
         if (isEdit) {
             item = new MenuItemModel(itemId, name, category, type, price, imageUriString, description);

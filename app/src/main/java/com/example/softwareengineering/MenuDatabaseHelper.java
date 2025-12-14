@@ -14,7 +14,7 @@ import java.util.List;
 public class MenuDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "staff_menu.db";
-    private static final int DB_VERSION = 6;
+    private static final int DB_VERSION = 7;
     private static final String TABLE_MENU = "menu";
     private static final String COL_ID = "id";
     private static final String COL_NAME = "name";
@@ -31,7 +31,7 @@ public class MenuDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String createTable = "CREATE TABLE " + TABLE_MENU + " (" +
                 COL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COL_NAME + " TEXT, " +
+                COL_NAME + " TEXT UNIQUE, " +
                 COL_CATEGORY + " TEXT, " +
                 COL_TYPE + " TEXT, " +
                 COL_PRICE + " REAL, " +
@@ -49,7 +49,6 @@ public class MenuDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // Add new item
     public boolean addMenuItem(MenuItemModel item) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -57,13 +56,47 @@ public class MenuDatabaseHelper extends SQLiteOpenHelper {
         cv.put(COL_CATEGORY, item.getCategory());
         cv.put(COL_TYPE, item.getType());
         cv.put(COL_PRICE, item.getPrice());
-        cv.put(COL_IMAGE, item.getImageUri()); // store URI as string
+        cv.put(COL_IMAGE, item.getImageUri());
         cv.put("description", item.getDescription());
 
         long result = db.insert(TABLE_MENU, null, cv);
         db.close();
+
         return result != -1;
     }
+
+    public boolean isMenuNameExists(String name, @Nullable Integer excludeId) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String selection;
+        String[] selectionArgs;
+
+        if (excludeId != null) {
+            selection = COL_NAME + "=? AND " + COL_ID + "!=?";
+            selectionArgs = new String[]{name, String.valueOf(excludeId)};
+        } else {
+            // for add
+            selection = COL_NAME + "=?";
+            selectionArgs = new String[]{name};
+        }
+
+        Cursor cursor = db.query(
+                TABLE_MENU,
+                new String[]{COL_ID},
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        boolean exists = cursor.moveToFirst();
+        cursor.close();
+        db.close();
+        return exists;
+    }
+
+
 
     // Update existing item
     public void updateMenuItem(MenuItemModel item) {
@@ -76,7 +109,7 @@ public class MenuDatabaseHelper extends SQLiteOpenHelper {
         values.put(COL_IMAGE, item.getImageUri()); // update image
         values.put("description", item.getDescription());
 
-        int rowsAffected = db.update(TABLE_MENU, values, "id=?", new String[]{String.valueOf(item.getId())});
+        db.update(TABLE_MENU, values, COL_ID + "=?", new String[]{String.valueOf(item.getId())});
         db.close();
     }
 

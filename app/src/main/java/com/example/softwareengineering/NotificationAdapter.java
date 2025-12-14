@@ -2,17 +2,23 @@ package com.example.softwareengineering;
 
 import android.annotation.SuppressLint;
 import android.graphics.Color;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.LayoutInflater;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.content.res.ColorStateList;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
@@ -38,6 +44,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         return new ViewHolder(v);
     }
 
+    @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         NotificationModel n = list.get(position);
@@ -67,6 +74,30 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         holder.icon.setImageResource(n.getIcon());
         holder.icon.setColorFilter(n.getIconColor());
         holder.icon.setBackgroundTintList(ColorStateList.valueOf(n.getIconBgColor()));
+
+        holder.itemView.setOnLongClickListener(v -> {
+            boolean wasUnread = n.isUnread();
+            n.setUnread(false);
+            notifyItemChanged(position);
+
+            if (holder.itemView.getContext() instanceof NotificationActivity) {
+                ((NotificationActivity) holder.itemView.getContext()).saveNotifications();
+            }
+
+            Snackbar.make(v, "Marked as read", Snackbar.LENGTH_LONG)
+                    .setAction("UNDO", view -> {
+                        n.setUnread(wasUnread);
+                        notifyItemChanged(position);
+
+                        if (holder.itemView.getContext() instanceof NotificationActivity) {
+                            ((NotificationActivity) holder.itemView.getContext()).saveNotifications();
+                        }
+                    })
+                    .show();
+
+            return true;
+        });
+
     }
 
     private String getTimeAgo(long time) {
@@ -112,6 +143,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             unreadDot = itemView.findViewById(R.id.unreadDot);
             itemDivider = itemView.findViewById(R.id.itemDivider);
             itemLayout = itemView.findViewById(R.id.mainItemLayout);
+
         }
     }
 }

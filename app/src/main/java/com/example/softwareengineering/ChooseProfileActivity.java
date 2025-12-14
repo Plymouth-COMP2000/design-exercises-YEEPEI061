@@ -123,10 +123,20 @@ public class ChooseProfileActivity extends AppCompatActivity {
         confirmButton.setOnClickListener(v -> saveAndProceed());
 
         skipButton.setOnClickListener(v -> {
+            SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+            String role = prefs.getString("role", "guest");
+
             Toast.makeText(this, "Please login now.", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(ChooseProfileActivity.this, LoginActivity.class));
+
+            if ("guest".equals(role)) {
+                startActivity(new Intent(ChooseProfileActivity.this, LoginActivity.class));
+            } else {
+                startActivity(new Intent(ChooseProfileActivity.this, SettingsActivity.class));
+            }
+
             finish();
         });
+
     }
 
     private void selectGender(String gender) {
@@ -182,6 +192,11 @@ public class ChooseProfileActivity extends AppCompatActivity {
             return;
         }
 
+        if (uploadedImageUri == null && selectedGender == null) {
+            Toast.makeText(this, "Please select a gender or upload a profile image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String url = BASE_URL + "read_user/" + STUDENT_ID + "/" + username;
 
         loadingOverlay.setVisibility(View.VISIBLE);
@@ -211,8 +226,9 @@ public class ChooseProfileActivity extends AppCompatActivity {
 
                             profileEditor.apply();
 
-                            Toast.makeText(this, "Profile set! Please login now.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Profile set successfully! Please log in now", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(ChooseProfileActivity.this, LoginActivity.class));
+
                             finish();
                         }
                     } catch (Exception e) {

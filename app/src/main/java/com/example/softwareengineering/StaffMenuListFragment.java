@@ -112,6 +112,7 @@ public class StaffMenuListFragment extends Fragment {
 
     public void refreshList() {
         List<MenuItemModel> items = dbHelper.getMenuItemsByCategory(category);
+        items.sort((a, b) -> a.getName().compareToIgnoreCase(b.getName()));
         adapter.updateList(items);
     }
 

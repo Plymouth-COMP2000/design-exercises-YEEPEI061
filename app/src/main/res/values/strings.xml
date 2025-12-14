@@ -94,7 +94,7 @@
 
     <string-array name="food_types">
         <item>Appetizer</item>
-        <item>Main</item>
+        <item>Main Course</item>
         <item>Dessert</item>
     </string-array>
 

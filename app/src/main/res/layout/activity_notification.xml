@@ -127,8 +127,6 @@
             android:textColor="@color/my_medium"/>
     </LinearLayout>
 
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notificationRecycler"
         android:layout_width="0dp"

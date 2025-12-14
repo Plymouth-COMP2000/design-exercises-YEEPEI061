@@ -1,7 +1,13 @@
 package com.example.softwareengineering;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -60,7 +67,12 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
         if ("Past".equals(status)) {
             holder.cancelButton.setImageResource(R.drawable.ic_check_circle);
             holder.cancelButton.setColorFilter(ContextCompat.getColor(context, R.color.green));
-            holder.cancelButton.setEnabled(false);
+            holder.cancelButton.setEnabled(true);
+
+            TooltipCompat.setTooltipText(
+                    holder.cancelButton,
+                    "Past reservation"
+            );
         } else {
             holder.cancelButton.setImageResource(R.drawable.ic_cancel_circle);
             holder.cancelButton.setColorFilter(ContextCompat.getColor(context, R.color.my_primary));
@@ -69,6 +81,8 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
                 if (listener != null) listener.onCancel(r);
             });
         }
+
+        setCustomerProfileImage(holder.customerImage, r.getGuestId());
 
     }
 
@@ -128,8 +142,6 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
         notifyDataSetChanged();
     }
 
-
-
     private String calculateStatus(String date, String time) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy h:mm a", Locale.ENGLISH);
@@ -147,5 +159,26 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
             return "Upcoming";
         }
     }
+
+    private void setCustomerProfileImage(ImageView customerImage, String guestId) {
+        SharedPreferences profilePrefs = context.getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
+        String savedPath = profilePrefs.getString("profileImagePath_" + guestId, null);
+
+        if (savedPath != null) {
+            try {
+                Bitmap bitmap = BitmapFactory.decodeFile(savedPath);
+                customerImage.setImageBitmap(bitmap);
+            } catch (Exception e) {
+                Log.e("StaffAdapter", "Error loading profile image", e);
+                customerImage.setImageResource(R.drawable.sample_profile_boy);
+            }
+        } else {
+            String gender = profilePrefs.getString("profileGender_" + guestId, "boy");
+            customerImage.setImageResource(
+                    "boy".equals(gender) ? R.drawable.sample_profile_boy : R.drawable.sample_profile
+            );
+        }
+    }
+
 
 }
