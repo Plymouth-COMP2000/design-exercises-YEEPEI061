@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class UserSignupDbHelper extends SQLiteOpenHelper {
+public class UserSignupDatabaseHelper extends SQLiteOpenHelper {
     private static final String DB_NAME = "UserSignup.db";
     private static final int DB_VERSION = 1;
 
@@ -14,7 +14,7 @@ public class UserSignupDbHelper extends SQLiteOpenHelper {
     private static final String COLUMN_USER_ID = "userId";
     private static final String COLUMN_SIGNUP_TIME = "signupTime";
 
-    public UserSignupDbHelper(Context context) {
+    public UserSignupDatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 

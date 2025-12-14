@@ -119,7 +119,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                 JSONObject user = readResponse.getJSONObject("user");
                                                 String userId = user.getString("_id");
 
-                                                UserSignupDbHelper dbHelper = new UserSignupDbHelper(SignUpActivity.this);
+                                                UserSignupDatabaseHelper dbHelper = new UserSignupDatabaseHelper(SignUpActivity.this);
                                                 dbHelper.saveSignupTime(userId, signupTime);
 
                                                 loadingOverlay.setVisibility(View.GONE);
