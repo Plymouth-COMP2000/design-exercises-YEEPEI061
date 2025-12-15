@@ -65,7 +65,7 @@
                 android:id="@+id/allButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="All"
+                android:text="@string/all"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/my_tertiary"
                 app:strokeColor="@color/my_secondary"/>
@@ -75,7 +75,7 @@
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Unread"
+                android:text="@string/unread"
                 android:layout_marginStart="8dp"
                 app:strokeColor="@color/my_secondary" />
         </LinearLayout>
@@ -84,7 +84,7 @@
             android:id="@+id/markAllRead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mark all as read"
+            android:text="@string/markAllAsRead"
             android:textColor="@color/my_primary"
             android:textStyle="bold"
             android:textSize="14sp" />
@@ -104,6 +104,7 @@
             android:id="@+id/emptyStateIcon"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:contentDescription="@string/icon"
             android:src="@drawable/ic_notification_outline"
             app:tint="@color/my_primary"/>
 
@@ -111,7 +112,7 @@
             android:id="@+id/emptyStateTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="All caught up!"
+            android:text="@string/allCaughtUp"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginTop="12dp"
@@ -121,7 +122,7 @@
             android:id="@+id/emptyStateMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="You have no new notifications."
+            android:text="@string/noNewNotification"
             android:textSize="14sp"
             android:layout_marginTop="4dp"
             android:textColor="@color/my_medium"/>

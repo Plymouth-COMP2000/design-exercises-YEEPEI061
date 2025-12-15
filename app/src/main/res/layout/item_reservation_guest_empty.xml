@@ -22,7 +22,7 @@
         android:id="@+id/emptyHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No upcoming reservations!"
+        android:text="@string/noUpcoming"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginTop="12dp"
@@ -33,7 +33,7 @@
         android:id="@+id/emptySubText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Looks like your calendar is clear."
+        android:text="@string/noUpcomingSubtext"
         android:textSize="14sp"
         android:textColor="@color/my_medium"
         android:gravity="center"/>

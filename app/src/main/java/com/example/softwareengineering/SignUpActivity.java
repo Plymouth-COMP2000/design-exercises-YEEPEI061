@@ -167,7 +167,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 int statusCode = error.networkResponse.statusCode;
 
                                 if (statusCode == 400) {
-                                    errorMsg = "This account already exists. Please log in or use a different username or email.";
+                                    errorMsg = "This account already exists. Please log in or use a different username.";
                                 } else if (statusCode == 500) {
                                     errorMsg = "Server error. Please try again later.";
                                 } else {

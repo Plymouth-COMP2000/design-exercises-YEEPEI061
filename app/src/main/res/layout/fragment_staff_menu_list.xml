@@ -19,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Current Menu"
+            android:text="@string/currentMenu"
             android:textStyle="bold"
             android:textSize="18sp"
             android:textColor="@color/black" />
@@ -38,7 +38,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_filter"
                 app:tint="@color/my_primary"
-                android:contentDescription="Filter" />
+                android:contentDescription="@string/filter" />
 
         </LinearLayout>
     </LinearLayout>

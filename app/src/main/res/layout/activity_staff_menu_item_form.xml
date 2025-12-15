@@ -80,6 +80,7 @@
                     android:id="@+id/itemNameInput"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:autofillHints="Enter item name"
                     android:background="@drawable/input_bg"
                     android:drawablePadding="8dp"
                     android:paddingStart="12dp"
@@ -87,7 +88,7 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray"
                     android:inputType="text"
-                    android:hint="e.g. Tiramisu"
+                    android:hint="@string/itemNameSample"
                     android:gravity="center_vertical"
                     android:drawableTint="@color/my_primary"/>
             </LinearLayout>
@@ -111,6 +112,7 @@
                     android:id="@+id/priceInput"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:autofillHints="Enter price"
                     android:background="@drawable/input_bg"
                     android:drawablePadding="8dp"
                     android:paddingStart="12dp"
@@ -118,7 +120,7 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray"
                     android:inputType="numberDecimal"
-                    android:hint="e.g. 24"
+                    android:hint="@string/priceSample"
                     android:gravity="center_vertical"
                     android:drawableTint="@color/my_primary"/>
             </LinearLayout>
@@ -170,6 +172,7 @@
                     android:id="@+id/descriptionInput"
                     android:layout_width="match_parent"
                     android:layout_height="100dp"
+                    android:autofillHints="Enter description"
                     android:background="@drawable/input_bg"
                     android:drawablePadding="8dp"
                     android:paddingVertical="10dp"
@@ -178,7 +181,7 @@
                     android:textColor="@color/black"
                     android:textColorHint="@color/gray"
                     android:inputType="textMultiLine"
-                    android:hint="e.g. Classic Italian dessert with mascarpone, coffee, and cocoa."
+                    android:hint="@string/descriptionSample"
                     android:gravity="top"
                     android:drawableTint="@color/my_primary"/>
             </LinearLayout>
@@ -193,7 +196,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Image"
+                    android:text="@string/image"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
                     android:layout_marginBottom="4dp" />
@@ -220,7 +223,7 @@
                         android:id="@+id/uploadHint"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Upload a file or drag and drop"
+                        android:text="@string/uploadText"
                         android:textColor="@color/gray"
                         android:textSize="14sp"
                         android:layout_marginTop="8dp" />
@@ -229,7 +232,7 @@
                         android:id="@+id/uploadFormat"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="PNG, JPG, GIF up to 10MB"
+                        android:text="@string/uploadSubtext"
                         android:textColor="@color/gray"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp" />
@@ -242,6 +245,7 @@
 
     <LinearLayout
         android:id="@+id/footer"
+        style="?android:attr/buttonBarStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
@@ -253,6 +257,7 @@
 
         <Button
             android:id="@+id/cancelButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
@@ -264,6 +269,7 @@
 
         <Button
             android:id="@+id/saveButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"

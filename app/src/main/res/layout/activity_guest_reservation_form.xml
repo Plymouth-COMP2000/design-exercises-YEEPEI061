@@ -66,6 +66,7 @@
                 android:id="@+id/dateTimeSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:weightSum="2">
 
@@ -89,9 +90,12 @@
                         android:id="@+id/dateInput"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:autofillHints="Select date"
                         android:background="@drawable/input_bg"
                         android:drawableStart="@drawable/ic_calendar"
+                        android:hint="@string/date"
                         android:drawablePadding="8dp"
+                        android:inputType="date"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
                         android:textColor="@color/black"
@@ -119,9 +123,11 @@
                         android:id="@+id/timeInput"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:autofillHints="Select time"
                         android:background="@drawable/input_bg"
                         android:drawableStart="@drawable/ic_schedule"
                         android:drawablePadding="8dp"
+                        android:inputType="time"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
                         android:textColor="@color/black"
@@ -151,6 +157,7 @@
                     android:id="@+id/guestCountInput"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:autofillHints="Enter number of guest"
                     android:background="@drawable/input_bg"
                     android:drawableStart="@drawable/ic_group"
                     android:drawablePadding="8dp"
@@ -203,7 +210,7 @@
                             android:layout_weight="2"
                             android:background="@drawable/rounded_image_bg"
                             android:gravity="center"
-                            android:text="Kitchen"
+                            android:text="@string/kitchen"
                             android:backgroundTint="@color/my_tertiary"
                             android:textColor="@color/my_primary"
                             android:textStyle="bold" />
@@ -220,7 +227,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/rounded_image_bg"
                             android:gravity="center"
-                            android:text="Bar"
+                            android:text="@string/bar"
                             android:textColor="@color/my_primary"
                             android:backgroundTint="@color/my_tertiary"
                             android:textStyle="bold" />
@@ -254,7 +261,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T1"
+                                android:text="@string/T1"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -273,7 +280,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T2"
+                                android:text="@string/T2"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -292,7 +299,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T3"
+                                android:text="@string/T3"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -311,7 +318,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T4"
+                                android:text="@string/T4"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -332,7 +339,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T5"
+                                android:text="@string/T5"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -351,7 +358,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T6"
+                                android:text="@string/T6"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -370,7 +377,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T7"
+                                android:text="@string/T7"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -390,7 +397,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T8"
+                                android:text="@string/T8"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -409,7 +416,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T9"
+                                android:text="@string/T9"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -429,7 +436,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T10"
+                                android:text="@string/T10"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -449,7 +456,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T11"
+                                android:text="@string/T11"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -468,7 +475,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="T12"
+                                android:text="@string/T12"
                                 android:textColor="@android:color/white"
                                 android:textStyle="bold"
                                 android:textSize="18sp" />
@@ -496,7 +503,7 @@
                             android:layout_weight="1"
                             android:background="@drawable/rounded_image_bg"
                             android:gravity="center"
-                            android:text="Counter"
+                            android:text="@string/counter"
                             android:textColor="@color/my_primary"
                             android:backgroundTint="@color/my_tertiary"
                             android:textStyle="bold" />
@@ -505,6 +512,7 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:baselineAligned="false"
                         android:orientation="horizontal"
                         android:gravity="center"
                         android:layout_marginTop="20dp"
@@ -531,7 +539,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="6dp"
-                                android:text="Available"
+                                android:text="@string/available"
                                 android:textColor="@color/black"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -556,7 +564,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="6dp"
-                                android:text="Occupied"
+                                android:text="@string/occupied"
                                 android:textColor="@color/black"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -581,7 +589,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="6dp"
-                                android:text="Selected"
+                                android:text="@string/selected"
                                 android:textColor="@color/black"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -603,7 +611,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Special Requests (optional)"
+                    android:text="@string/specialRequests"
                     android:textSize="16sp"
                     android:textColor="@color/my_primary"
                     android:layout_marginBottom="4dp" />
@@ -612,11 +620,12 @@
                         android:id="@+id/requestInput"
                         android:layout_width="match_parent"
                         android:layout_height="100dp"
+                        android:autofillHints="Enter special request"
                         android:background="@drawable/input_bg"
                         android:paddingVertical="10dp"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:hint="e.g. Anniversary, dietary restrictions"
+                        android:hint="@string/specialRequestHint"
                         android:textColor="@color/black"
                         android:inputType="textMultiLine"
                         android:gravity="top"
@@ -643,6 +652,7 @@
 
     <LinearLayout
         android:id="@+id/footer"
+        style="?android:attr/buttonBarStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="16dp"
@@ -654,6 +664,7 @@
 
         <Button
             android:id="@+id/cancelButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
@@ -665,6 +676,7 @@
 
         <Button
             android:id="@+id/saveButton"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"

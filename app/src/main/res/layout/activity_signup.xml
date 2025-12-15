@@ -37,6 +37,7 @@
                     android:id="@+id/backButton"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:contentDescription="@string/back"
                     android:visibility="gone"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@drawable/ic_arrow_back"
@@ -77,6 +78,7 @@
                 android:id="@+id/nameRow"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:layout_marginTop="24dp"
@@ -105,6 +107,7 @@
                         android:id="@+id/firstNameInput"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:autofillHints="Enter first name"
                         android:background="@drawable/input_bg"
                         android:drawableStart="@drawable/ic_name"
                         android:drawablePadding="8dp"
@@ -113,7 +116,8 @@
                         android:textColor="@color/black"
                         android:inputType="textPersonName"
                         android:gravity="center_vertical"
-                        android:drawableTint="@color/my_primary" />
+                        android:drawableTint="@color/my_primary"
+                        tools:ignore="LabelFor" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -136,6 +140,7 @@
                         android:id="@+id/lastNameInput"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:autofillHints="Enter last name"
                         android:background="@drawable/input_bg"
                         android:drawableStart="@drawable/ic_name"
                         android:drawablePadding="8dp"
@@ -144,7 +149,8 @@
                         android:textColor="@color/black"
                         android:inputType="textPersonName"
                         android:gravity="center_vertical"
-                        android:drawableTint="@color/my_primary" />
+                        android:drawableTint="@color/my_primary"
+                        tools:ignore="LabelFor" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -170,6 +176,7 @@
                     android:id="@+id/usernameInput"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:autofillHints="Enter username"
                     android:background="@drawable/input_bg"
                     android:drawableStart="@drawable/ic_person"
                     android:drawablePadding="8dp"
@@ -178,7 +185,8 @@
                     android:textColor="@color/black"
                     android:inputType="textPersonName"
                     android:gravity="center_vertical"
-                    android:drawableTint="@color/my_primary" />
+                    android:drawableTint="@color/my_primary"
+                    tools:ignore="LabelFor" />
             </LinearLayout>
 
             <LinearLayout
@@ -203,6 +211,7 @@
                     android:id="@+id/emailInput"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:autofillHints="Enter email"
                     android:background="@drawable/input_bg"
                     android:drawableStart="@drawable/ic_email"
                     android:drawablePadding="8dp"
@@ -211,7 +220,8 @@
                     android:textColor="@color/black"
                     android:inputType="textEmailAddress"
                     android:gravity="center_vertical"
-                    android:drawableTint="@color/my_primary" />
+                    android:drawableTint="@color/my_primary"
+                    tools:ignore="LabelFor" />
             </LinearLayout>
 
             <LinearLayout
@@ -236,6 +246,7 @@
                     android:id="@+id/contactInput"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:autofillHints="Enter contact number"
                     android:background="@drawable/input_bg"
                     android:drawableStart="@drawable/ic_phone"
                     android:drawablePadding="8dp"
@@ -244,7 +255,8 @@
                     android:textColor="@color/black"
                     android:inputType="phone"
                     android:gravity="center_vertical"
-                    android:drawableTint="@color/my_primary" />
+                    android:drawableTint="@color/my_primary"
+                    tools:ignore="LabelFor" />
             </LinearLayout>
 
             <LinearLayout
@@ -274,6 +286,7 @@
                         android:id="@+id/passwordInput"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:autofillHints="Enter password"
                         android:background="@drawable/input_bg"
                         android:drawableStart="@drawable/ic_lock"
                         android:drawablePadding="8dp"
@@ -283,12 +296,13 @@
                         android:inputType="textPassword"
                         android:gravity="center_vertical"
                         android:drawableTint="@color/my_primary"
-                        tools:ignore="MissingConstraints" />
+                        tools:ignore="LabelFor,MissingConstraints" />
 
                     <ImageView
                         android:id="@+id/togglePassword"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:contentDescription="@string/togglePassword"
                         android:src="@drawable/ic_visibility_off"
                         app:tint="@color/my_secondary"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -325,6 +339,7 @@
                         android:id="@+id/confirmPasswordInput"
                         android:layout_width="match_parent"
                         android:layout_height="50dp"
+                        android:autofillHints="Confirm password"
                         android:background="@drawable/input_bg"
                         android:drawableStart="@drawable/ic_lock"
                         android:drawablePadding="8dp"
@@ -334,12 +349,13 @@
                         android:inputType="textPassword"
                         android:gravity="center_vertical"
                         android:drawableTint="@color/my_primary"
-                        tools:ignore="MissingConstraints" />
+                        tools:ignore="LabelFor,MissingConstraints" />
 
                     <ImageView
                         android:id="@+id/toggleConfirmPassword"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
+                        android:contentDescription="@string/togglePassword"
                         android:src="@drawable/ic_visibility_off"
                         app:tint="@color/my_secondary"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -384,7 +400,7 @@
                     android:id="@+id/loginText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Login"
+                    android:text="@string/login"
                     android:textColor="@color/my_primary"
                     android:textStyle="bold"
                     android:textSize="16sp"

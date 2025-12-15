@@ -70,6 +70,7 @@
 
         <LinearLayout
             android:id="@+id/buttonContainer"
+            style="?android:attr/buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -77,14 +78,16 @@
 
             <Button
                 android:id="@+id/cancelReservationButton"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/cancel"
                 android:textColor="@color/my_primary"
-                android:backgroundTint="@color/my_tertiary"/>
+                android:backgroundTint="@color/my_tertiary" />
 
             <Button
                 android:id="@+id/editButton"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/edit"
