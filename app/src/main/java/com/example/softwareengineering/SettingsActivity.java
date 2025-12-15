@@ -160,7 +160,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void saveSwitchTimestamp(String key, boolean isEnabled) {
-        if (!isEnabled) return; // Only save when turning ON
+        if (!isEnabled) return;
 
         SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
         String userId = session.getString("userId", "");

@@ -100,13 +100,11 @@ public class SignUpActivity extends AppCompatActivity {
 
                 String createUserUrl = BASE_URL + "create_user/" + STUDENT_ID;
 
-                // Step 1: Create the user
                 JsonObjectRequest createRequest = new JsonObjectRequest(
                         Request.Method.POST,
                         createUserUrl,
                         jsonBody,
                         response -> {
-                            // Step 2: GET the user to obtain _id
                             String readUserUrl = BASE_URL + "read_user/" + STUDENT_ID + "/" + username;
 
                             JsonObjectRequest readRequest = new JsonObjectRequest(
@@ -119,13 +117,13 @@ public class SignUpActivity extends AppCompatActivity {
                                                 JSONObject user = readResponse.getJSONObject("user");
                                                 String userId = user.getString("_id");
 
-                                                UserSignupDatabaseHelper dbHelper = new UserSignupDatabaseHelper(SignUpActivity.this);
+                                                UserSignupDbHelper dbHelper = new UserSignupDbHelper(SignUpActivity.this);
                                                 dbHelper.saveSignupTime(userId, signupTime);
 
                                                 loadingOverlay.setVisibility(View.GONE);
 
                                                 if (fromStaffManagement) {
-                                                    Toast.makeText(SignUpActivity.this, "Account created!", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(SignUpActivity.this, "Account created successfully!", Toast.LENGTH_SHORT).show();
                                                     startActivity(new Intent(SignUpActivity.this, SettingsActivity.class));
                                                 } else {
                                                     Toast.makeText(SignUpActivity.this, "Account created! Please choose your profile", Toast.LENGTH_SHORT).show();
@@ -169,7 +167,7 @@ public class SignUpActivity extends AppCompatActivity {
                                 int statusCode = error.networkResponse.statusCode;
 
                                 if (statusCode == 400) {
-                                    errorMsg = "User already exists. Please try logging in.";
+                                    errorMsg = "This account already exists. Please log in or use a different username or email.";
                                 } else if (statusCode == 500) {
                                     errorMsg = "Server error. Please try again later.";
                                 } else {
@@ -238,4 +236,5 @@ public class SignUpActivity extends AppCompatActivity {
             return false;
         });
     }
+
 }

@@ -82,7 +82,7 @@
     <string name="specialRequests">Special Requests</string>
     <string name="editReservation">Edit Reservation</string>
     <string name="cancelReservation">Cancel Reservation</string>
-    <string name="saveChanges">Save Changes</string>
+    <string name="saveChanges">Save</string>
     <string name="noReservation">No Reservation</string>
 
     <string name="logout">Logout</string>

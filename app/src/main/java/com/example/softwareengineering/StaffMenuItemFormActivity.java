@@ -73,7 +73,7 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
 
         if ("edit".equalsIgnoreCase(mode)) {
             titleText.setText("Edit Menu Item");
-            saveButton.setText("Save Changes");
+            saveButton.setText("Save");
 
             itemNameInput.setText(intent.getStringExtra("name"));
             priceInput.setText(intent.getStringExtra("price"));
@@ -185,7 +185,7 @@ public class StaffMenuItemFormActivity extends AppCompatActivity {
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                             selectedImageUri = result.getData().getData();
 
-//                            // Grant temporary persistable permission
+                            // Grant temporary persistable permission
                             getContentResolver().takePersistableUriPermission(selectedImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
 

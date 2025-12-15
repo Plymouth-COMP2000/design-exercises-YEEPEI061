@@ -93,7 +93,7 @@ public class NotificationActivity extends AppCompatActivity {
         String userId = userSession.getString("userId", "");
         String role = userSession.getString("role", "guest");
 
-        UserSignupDatabaseHelper dbHelper = new UserSignupDatabaseHelper(this);
+        UserSignupDbHelper dbHelper = new UserSignupDbHelper(this);
         long signupTime = dbHelper.getSignupTime(userId);
 
         String prefName = "guest".equalsIgnoreCase(role) ? "Notifications_" + userId : "Notifications_staff";
@@ -113,7 +113,6 @@ public class NotificationActivity extends AppCompatActivity {
 
                 if (n.getTimestamp() < signupTime) continue;
 
-                // Staff filters
                 if ("staff".equalsIgnoreCase(role)) {
                     if (n.isNewReservation()) {
                         long enabledTime = prefs.getLong("notif_new_enabledTime", 0);
@@ -127,7 +126,7 @@ public class NotificationActivity extends AppCompatActivity {
                         long enabledTime = prefs.getLong("notif_cancel_enabledTime", 0);
                         if (!isStaffNotificationAllowed("notif_cancel") || n.getTimestamp() < enabledTime) continue;
                     }
-                } else { // Guest filters
+                } else {
                     if (n.isCancelReservation()) {
                         SharedPreferences guestPrefs = getSharedPreferences("NotificationPrefs_" + userId, MODE_PRIVATE);
                         long enabledTime = guestPrefs.getLong("notif_cancel_enabledTime", 0);

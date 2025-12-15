@@ -172,7 +172,6 @@ public class EditProfileActivity extends AppCompatActivity {
                                 loadingOverlay.setVisibility(View.GONE);
                             });
                         }).start();
-                    } else {
                     }
                 }
         );
@@ -283,7 +282,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
                 return;
             }
-
             if (!password.equals(confirmPassword)) {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
                 return;
@@ -296,8 +294,6 @@ public class EditProfileActivity extends AppCompatActivity {
             JSONObject jsonBody = new JSONObject();
             jsonBody.put("firstname", firstName.isEmpty() ? actualFirstName : firstName);
             jsonBody.put("lastname", lastName.isEmpty() ? actualLastName : lastName);
-            String finalUsername = newUsername.isEmpty() ? actualUsername : newUsername;
-            jsonBody.put("username", finalUsername);
             jsonBody.put("email", email.isEmpty() ? actualEmail : email);
             jsonBody.put("contact", contact.isEmpty() ? actualContact : contact);
             jsonBody.put("password", password.isEmpty() ? actualPassword : password);
@@ -306,42 +302,21 @@ public class EditProfileActivity extends AppCompatActivity {
             String usertype = prefs.getString("role", null);
             if (usertype != null) jsonBody.put("usertype", usertype);
 
-            String url = BASE_URL + "update_user/" + STUDENT_ID + "/" + username;
+            String finalUsername = newUsername.isEmpty() ? actualUsername : newUsername;
+            jsonBody.put("username", finalUsername);
 
-            JsonObjectRequest putRequest = new JsonObjectRequest(
-                    Request.Method.PUT,
-                    url,
-                    jsonBody,
-                    response -> {
-                        SharedPreferences.Editor sessionEditor = prefs.edit();
-                        sessionEditor.putString("username", finalUsername);
-                        sessionEditor.apply();
-
-                        SharedPreferences.Editor profileEditor = profilePrefs.edit();
-
-                        if (tempProfileImagePath != null) {
-                            profileEditor.putString("profileImagePath_" + userId, tempProfileImagePath);
-                            profileEditor.apply();
-                        }
-
-                        profileEditor.apply();
-
-                        Toast.makeText(this, "Changes saved!", Toast.LENGTH_SHORT).show();
-                        loadingOverlay.setVisibility(View.GONE);
-                        finish();
-                    },
-                    error -> {
-                        Toast.makeText(this, "Failed to update profile", Toast.LENGTH_LONG).show();
-                        loadingOverlay.setVisibility(View.GONE);
-                    }
-            );
-
-            Volley.newRequestQueue(this).add(putRequest);
+            if (finalUsername.equals(actualUsername)) {
+                performUpdate(jsonBody, finalUsername);
+            } else {
+                checkUsernameAndUpdate(finalUsername, jsonBody);
+            }
 
         } catch (Exception e) {
             loadingOverlay.setVisibility(View.GONE);
+            Toast.makeText(this, "Unexpected error", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     @SuppressLint("ClickableViewAccessibility")
     private void setupPasswordToggle(EditText inputField, ImageView toggleIcon) {
@@ -368,4 +343,90 @@ public class EditProfileActivity extends AppCompatActivity {
             return false;
         });
     }
+
+    private void checkUsernameAndUpdate(String finalUsername, JSONObject jsonBody) {
+        String url = BASE_URL + "read_all_users/" + STUDENT_ID;
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        boolean usernameExists = false;
+
+                        if (response.has("users")) {
+                            for (int i = 0; i < response.getJSONArray("users").length(); i++) {
+                                JSONObject user = response.getJSONArray("users").getJSONObject(i);
+                                String existingUsername = user.getString("username");
+                                String existingUserId = user.getString("_id");
+
+                                // Ignore current user
+                                if (existingUsername.equalsIgnoreCase(finalUsername)
+                                        && !existingUserId.equals(userId)) {
+                                    usernameExists = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (usernameExists) {
+                            loadingOverlay.setVisibility(View.GONE);
+                            Toast.makeText(
+                                    this,
+                                    "Username already exists. Please choose another one.",
+                                    Toast.LENGTH_LONG
+                            ).show();
+                        } else {
+                            // Username is safe → update user
+                            performUpdate(jsonBody, finalUsername);
+                        }
+
+                    } catch (Exception e) {
+                        loadingOverlay.setVisibility(View.GONE);
+                        Toast.makeText(this, "Error validating username", Toast.LENGTH_SHORT).show();
+                    }
+                },
+                error -> {
+                    loadingOverlay.setVisibility(View.GONE);
+                    Toast.makeText(this, "Failed to validate username", Toast.LENGTH_SHORT).show();
+                }
+        );
+
+        Volley.newRequestQueue(this).add(request);
+    }
+
+    private void performUpdate(JSONObject jsonBody, String finalUsername) {
+        String url = BASE_URL + "update_user/" + STUDENT_ID + "/" + username;
+
+        JsonObjectRequest putRequest = new JsonObjectRequest(
+                Request.Method.PUT,
+                url,
+                jsonBody,
+                response -> {
+                    SharedPreferences.Editor sessionEditor =
+                            getSharedPreferences("UserSession", MODE_PRIVATE).edit();
+                    sessionEditor.putString("username", finalUsername);
+                    sessionEditor.apply();
+
+                    if (tempProfileImagePath != null) {
+                        profilePrefs.edit()
+                                .putString("profileImagePath_" + userId, tempProfileImagePath)
+                                .apply();
+                    }
+
+                    Toast.makeText(this, "Changes saved successfully!", Toast.LENGTH_SHORT).show();
+                    loadingOverlay.setVisibility(View.GONE);
+                    finish();
+                },
+                error -> {
+                    loadingOverlay.setVisibility(View.GONE);
+                    Toast.makeText(this, "Failed to update profile", Toast.LENGTH_LONG).show();
+                }
+        );
+
+        Volley.newRequestQueue(this).add(putRequest);
+    }
+
+
 }

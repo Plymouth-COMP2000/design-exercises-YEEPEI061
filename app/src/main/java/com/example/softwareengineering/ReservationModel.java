@@ -76,7 +76,9 @@ public class ReservationModel {
         return specialRequest;
     }
 
-    public String getGuestId() { return guestId; }
+    public String getGuestId() {
+        return guestId;
+    }
 
     public long getDateTimeMillis() {
         return dateTimeMillis;

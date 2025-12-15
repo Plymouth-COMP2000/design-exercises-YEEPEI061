@@ -76,7 +76,6 @@ public class GuestMenuAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             }
 
-
             // Hide divider if this is the last item in the list
             if (position == items.size() - 1) {
                 isLastInCategory = false;

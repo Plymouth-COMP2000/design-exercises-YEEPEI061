@@ -146,7 +146,7 @@ public class GuestReservationFormActivity extends AppCompatActivity {
 
             if ("edit".equals(mode)) {
                 titleText.setText("Edit Reservation");
-                saveButton.setText("Save Changes");
+                saveButton.setText("Save");
                 cancelReservationButton.setVisibility(View.VISIBLE);
 
                 saveButton.setOnClickListener(v -> saveReservation());
@@ -431,7 +431,7 @@ public class GuestReservationFormActivity extends AppCompatActivity {
             message = "Are you sure you want to save changes?";
         } else if ("bookAgain".equals(mode)) {
             title = "Book Reservation";
-            message = "Confirm booking this reservation again?";
+            message = "Confirm booking this reservation?";
         } else {
             title = "Book Reservation";
             message = "Confirm booking this reservation?";

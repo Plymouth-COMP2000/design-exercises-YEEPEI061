@@ -30,7 +30,6 @@ public class StaffMenuListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_staff_menu_list, container, false);
 
-        // Get category argument
         Bundle args = getArguments();
         category = (args != null) ? args.getString("category", "food") : "food";
 

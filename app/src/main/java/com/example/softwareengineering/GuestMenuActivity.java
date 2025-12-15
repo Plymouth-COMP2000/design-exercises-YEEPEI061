@@ -95,7 +95,7 @@ public class GuestMenuActivity extends AppCompatActivity {
     private void showPendingGuestNotifications() {
         SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);
         String userId = userSession.getString("userId", "");
-        UserSignupDatabaseHelper dbHelper = new UserSignupDatabaseHelper(this);
+        UserSignupDbHelper dbHelper = new UserSignupDbHelper(this);
         long signupTime = dbHelper.getSignupTime(userId);
         SharedPreferences sp = getSharedPreferences("Notifications_" + userId, MODE_PRIVATE);
         String json = sp.getString("list", "[]");

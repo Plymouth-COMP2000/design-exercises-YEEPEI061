@@ -12,6 +12,7 @@ import androidx.cardview.widget.CardView;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
 
         passwordInput = findViewById(R.id.passwordInput);
         togglePassword = findViewById(R.id.togglePassword);
+
+        FrameLayout loadingOverlay = findViewById(R.id.loadingOverlay);
 
         togglePassword.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
@@ -89,6 +92,8 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
+            loadingOverlay.setVisibility(View.VISIBLE);
+
             String url = BASE_URL + "read_user/" + STUDENT_ID + "/" + username;
 
             JsonObjectRequest request = new JsonObjectRequest(
@@ -96,6 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                     url,
                     null,
                     response -> {
+                        loadingOverlay.setVisibility(View.GONE);
                         try {
                             if (response.has("user")) {
                                 JSONObject user = response.getJSONObject("user");
@@ -134,6 +140,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     },
                     error -> {
+                        loadingOverlay.setVisibility(View.GONE);
                         if (error.networkResponse != null && error.networkResponse.statusCode == 404) {
                             Toast.makeText(LoginActivity.this, "User not found. Please sign up first.", Toast.LENGTH_LONG).show();
                             startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
