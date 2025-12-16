@@ -91,7 +91,7 @@ public class SettingsActivity extends AppCompatActivity {
             prefTwo.setText("Reservation Changes");
             prefThree.setText("Cancellations");
         }else{
-            prefOne.setText("Reservations Creation");
+            prefOne.setText("Reservation Creation");
         }
 
         Button logoutButton = findViewById(R.id.logoutButton);
