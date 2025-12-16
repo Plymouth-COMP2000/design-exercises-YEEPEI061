@@ -50,8 +50,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> galleryLauncher;
     private String tempProfileImagePath = null;
-
-    private SharedPreferences profilePrefs;
+    private UserSignupDbHelper dbHelper;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -63,7 +62,7 @@ public class EditProfileActivity extends AppCompatActivity {
         ImageButton changePhotoButton = findViewById(R.id.changePhotoButton);
 
         SharedPreferences sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE);
-        profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
+        dbHelper = new UserSignupDbHelper(this);
 
         userId = sharedPref.getString("userId", "");
         username = sharedPref.getString("username", "");
@@ -72,13 +71,16 @@ public class EditProfileActivity extends AppCompatActivity {
             finish();
         }
 
-        String savedPath = profilePrefs.getString("profileImagePath_" + userId, null);
-        if (savedPath != null) {
-            setProfileImageFromFile(savedPath);
+        String imagePath = dbHelper.getProfileImagePath(userId);
+
+        if (imagePath != null) {
+            setProfileImageFromFile(imagePath);
         } else {
-            String gender = profilePrefs.getString("profileGender_" + userId, "boy");
+            String gender = dbHelper.getProfileGender(userId);
             profileImage.setImageResource(
-                    "boy".equals(gender) ? R.drawable.sample_profile_boy : R.drawable.sample_profile
+                    "boy".equals(gender)
+                            ? R.drawable.sample_profile_boy
+                            : R.drawable.sample_profile
             );
         }
 
@@ -307,6 +309,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
             if (finalUsername.equals(actualUsername)) {
                 performUpdate(jsonBody, finalUsername);
+                performUpdate(jsonBody, finalUsername);
             } else {
                 checkUsernameAndUpdate(finalUsername, jsonBody);
             }
@@ -410,9 +413,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     sessionEditor.apply();
 
                     if (tempProfileImagePath != null) {
-                        profilePrefs.edit()
-                                .putString("profileImagePath_" + userId, tempProfileImagePath)
-                                .apply();
+                        dbHelper.updateProfileImage(userId, tempProfileImagePath);
                     }
 
                     Toast.makeText(this, "Changes saved successfully!", Toast.LENGTH_SHORT).show();

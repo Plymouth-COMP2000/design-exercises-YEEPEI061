@@ -1,13 +1,10 @@
 package com.example.softwareengineering;
 
-import static android.content.Context.MODE_PRIVATE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,16 +28,22 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
     private final Context context;
     private List<ReservationModel> list;
     private final OnStaffReservationListener listener;
+    private final UserSignupDbHelper dbHelper;
+
 
     public interface OnStaffReservationListener {
         void onCancel(ReservationModel reservation);
     }
 
-    public StaffReservationAdapter(Context context, List<ReservationModel> list, OnStaffReservationListener listener) {
+    public StaffReservationAdapter(Context context,
+                                   List<ReservationModel> list,
+                                   OnStaffReservationListener listener) {
         this.context = context;
         this.list = list;
         this.listener = listener;
+        this.dbHelper = new UserSignupDbHelper(context);
     }
+
 
     @NonNull
     @Override
@@ -161,24 +164,25 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
     }
 
     private void setCustomerProfileImage(ImageView customerImage, String guestId) {
-        SharedPreferences profilePrefs = context.getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
-        String savedPath = profilePrefs.getString("profileImagePath_" + guestId, null);
 
-        if (savedPath != null) {
-            try {
-                Bitmap bitmap = BitmapFactory.decodeFile(savedPath);
+        String imagePath = dbHelper.getProfileImagePath(guestId);
+
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            if (bitmap != null) {
                 customerImage.setImageBitmap(bitmap);
-            } catch (Exception e) {
-                Log.e("StaffAdapter", "Error loading profile image", e);
-                customerImage.setImageResource(R.drawable.sample_profile_boy);
+                return;
             }
-        } else {
-            String gender = profilePrefs.getString("profileGender_" + guestId, "boy");
-            customerImage.setImageResource(
-                    "boy".equals(gender) ? R.drawable.sample_profile_boy : R.drawable.sample_profile
-            );
         }
+
+        String gender = dbHelper.getProfileGender(guestId);
+        customerImage.setImageResource(
+                "boy".equals(gender)
+                        ? R.drawable.sample_profile_boy
+                        : R.drawable.sample_profile
+        );
     }
+
 
 
 }

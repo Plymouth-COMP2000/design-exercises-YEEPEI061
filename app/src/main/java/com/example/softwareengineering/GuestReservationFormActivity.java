@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -630,38 +631,44 @@ public class GuestReservationFormActivity extends AppCompatActivity {
         List<ReservationModel> reservations = db.getAllReservationsWithDateTime();
         db.close();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy hh:mm a", Locale.ENGLISH);
+        SimpleDateFormat sdf =
+                new SimpleDateFormat("EEE, dd MMM yyyy hh:mm a", Locale.ENGLISH);
         Date selectedDateTime;
 
         try {
             int year = Calendar.getInstance().get(Calendar.YEAR);
             String combined = date + " " + year + " " + time;
             selectedDateTime = sdf.parse(combined);
-
         } catch (Exception e) {
             return;
         }
 
-        assert selectedDateTime != null;
-        long selectedStart = selectedDateTime.getTime();
-        long selectedEnd = selectedStart + (45 * 60 * 1000);
+        if (selectedDateTime == null) return;
 
+        long selectedStart = selectedDateTime.getTime();
+        long duration = 45 * 60 * 1000;
+        long selectedEnd = selectedStart + duration;
+
+        // Reset tables
         for (Map.Entry<FrameLayout, TableStatus> entry : tableMap.entrySet()) {
-            entry.getKey().setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, R.color.green)
-            ));
+            entry.getKey().setBackgroundTintList(
+                    ColorStateList.valueOf(
+                            ContextCompat.getColor(this, R.color.green)
+                    )
+            );
             tableMap.put(entry.getKey(), TableStatus.AVAILABLE);
         }
 
         for (ReservationModel r : reservations) {
 
             long rStart = r.getDateTimeMillis();
-            long rEnd = rStart + (45 * 60 * 1000);
+            long rEnd = rStart + duration;
 
             boolean overlap = (selectedStart < rEnd && rStart < selectedEnd);
 
             if (overlap) {
                 for (FrameLayout table : tableMap.keySet()) {
+
                     String tableName =
                             "Table " + getResources()
                                     .getResourceEntryName(table.getId())
@@ -669,23 +676,33 @@ public class GuestReservationFormActivity extends AppCompatActivity {
 
                     if (tableName.equals(r.getTable())) {
 
-                        table.setBackgroundTintList(ColorStateList.valueOf(
-                                ContextCompat.getColor(this, R.color.gray)
-                        ));
+                        table.setBackgroundTintList(
+                                ColorStateList.valueOf(
+                                        ContextCompat.getColor(this, R.color.gray)
+                                )
+                        );
                         tableMap.put(table, TableStatus.OCCUPIED);
+
+                        break;
                     }
                 }
             }
+
         }
 
         // Keep selected table blue
-        if (selectedTable != null && tableMap.get(selectedTable) == TableStatus.AVAILABLE) {
-            selectedTable.setBackgroundTintList(ColorStateList.valueOf(
-                    ContextCompat.getColor(this, R.color.my_primary)
-            ));
+        if (selectedTable != null &&
+                tableMap.get(selectedTable) == TableStatus.AVAILABLE) {
+
+            selectedTable.setBackgroundTintList(
+                    ColorStateList.valueOf(
+                            ContextCompat.getColor(this, R.color.my_primary)
+                    )
+            );
             tableMap.put(selectedTable, TableStatus.SELECTED);
         }
     }
+
 
     private void saveNotificationImmediate(NotificationModel notif) {
         SharedPreferences userSession = getSharedPreferences("UserSession", MODE_PRIVATE);

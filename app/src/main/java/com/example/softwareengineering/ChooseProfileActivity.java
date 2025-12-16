@@ -183,7 +183,6 @@ public class ChooseProfileActivity extends AppCompatActivity {
     }
 
     private void saveAndProceed() {
-        SharedPreferences profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
         SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
         String username = session.getString("username", null);
 
@@ -215,16 +214,16 @@ public class ChooseProfileActivity extends AppCompatActivity {
                             sessionEditor.putString("userId", userId);
                             sessionEditor.apply();
 
-                            SharedPreferences.Editor profileEditor = profilePrefs.edit();
+                            UserSignupDbHelper dbHelper = new UserSignupDbHelper(this);
 
                             if (uploadedImageUri != null) {
                                 String filePath = saveImageToInternalStorage(uploadedImageUri, "profile_" + userId);
-                                profileEditor.putString("profileImagePath_" + userId, filePath);
+                                if (filePath != null) {
+                                    dbHelper.updateProfileImage(userId, filePath);
+                                }
                             } else if (selectedGender != null) {
-                                profileEditor.putString("profileGender_" + userId, selectedGender);
+                                dbHelper.updateProfileGender(userId, selectedGender);
                             }
-
-                            profileEditor.apply();
 
                             Toast.makeText(this, "Profile set successfully! Please log in now", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(ChooseProfileActivity.this, LoginActivity.class));

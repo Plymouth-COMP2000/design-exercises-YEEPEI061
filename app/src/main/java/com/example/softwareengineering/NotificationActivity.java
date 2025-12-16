@@ -28,7 +28,7 @@ public class NotificationActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     NotificationAdapter adapter;
     List<NotificationModel> notificationList = new ArrayList<>();
-    private final boolean showUnreadOnly = false;
+    private boolean showUnreadOnly = false;
 
 
     TextView markAllRead;
@@ -69,12 +69,14 @@ public class NotificationActivity extends AppCompatActivity {
         refreshNotifications(false);
 
         allButton.setOnClickListener(v -> {
+            showUnreadOnly = false;
             refreshNotifications(false);
             setButtonSelected(allButton, true);
             setButtonSelected(unreadButton, false);
         });
 
         unreadButton.setOnClickListener(v -> {
+            showUnreadOnly = true;
             refreshNotifications(true);
             setButtonSelected(allButton, false);
             setButtonSelected(unreadButton, true);

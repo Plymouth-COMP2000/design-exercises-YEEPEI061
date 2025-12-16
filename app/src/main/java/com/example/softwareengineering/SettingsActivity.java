@@ -130,20 +130,28 @@ public class SettingsActivity extends AppCompatActivity {
         TextView usernameText = findViewById(R.id.username);
         usernameText.setText(updatedUsername);
 
-        SharedPreferences sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE);
-        SharedPreferences profilePrefs = getSharedPreferences("ProfilePrefs", MODE_PRIVATE);
-        String userId = sharedPref.getString("userId", "");
+        SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String userId = session.getString("userId", "");
 
-        String savedPath = profilePrefs.getString("profileImagePath_" + userId, null);
-        if (savedPath != null) {
-            Bitmap bitmap = BitmapFactory.decodeFile(savedPath);
-            if (bitmap != null) profileImage.setImageBitmap(bitmap);
-        } else {
-            String gender = profilePrefs.getString("profileGender_" + userId, "boy");
-            profileImage.setImageResource(
-                    "boy".equals(gender) ? R.drawable.sample_profile_boy : R.drawable.sample_profile
-            );
+        UserSignupDbHelper dbHelper = new UserSignupDbHelper(this);
+
+        String imagePath = dbHelper.getProfileImagePath(userId);
+
+        if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            if (bitmap != null) {
+                profileImage.setImageBitmap(bitmap);
+                return;
+            }
         }
+
+        String gender = dbHelper.getProfileGender(userId);
+        profileImage.setImageResource(
+                "boy".equals(gender)
+                        ? R.drawable.sample_profile_boy
+                        : R.drawable.sample_profile
+        );
+
     }
 
 

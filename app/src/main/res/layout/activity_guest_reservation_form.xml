@@ -93,7 +93,6 @@
                         android:autofillHints="Select date"
                         android:background="@drawable/input_bg"
                         android:drawableStart="@drawable/ic_calendar"
-                        android:hint="@string/date"
                         android:drawablePadding="8dp"
                         android:inputType="date"
                         android:paddingStart="12dp"
