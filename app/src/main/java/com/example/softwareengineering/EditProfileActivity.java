@@ -50,7 +50,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> galleryLauncher;
     private String tempProfileImagePath = null;
-    private UserSignupDbHelper dbHelper;
+    private UserSignupDatabaseHelper dbHelper;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -62,7 +62,7 @@ public class EditProfileActivity extends AppCompatActivity {
         ImageButton changePhotoButton = findViewById(R.id.changePhotoButton);
 
         SharedPreferences sharedPref = getSharedPreferences("UserSession", MODE_PRIVATE);
-        dbHelper = new UserSignupDbHelper(this);
+        dbHelper = new UserSignupDatabaseHelper(this);
 
         userId = sharedPref.getString("userId", "");
         username = sharedPref.getString("username", "");
@@ -308,7 +308,6 @@ public class EditProfileActivity extends AppCompatActivity {
             jsonBody.put("username", finalUsername);
 
             if (finalUsername.equals(actualUsername)) {
-                performUpdate(jsonBody, finalUsername);
                 performUpdate(jsonBody, finalUsername);
             } else {
                 checkUsernameAndUpdate(finalUsername, jsonBody);

@@ -133,7 +133,7 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
         String userId = session.getString("userId", "");
 
-        UserSignupDbHelper dbHelper = new UserSignupDbHelper(this);
+        UserSignupDatabaseHelper dbHelper = new UserSignupDatabaseHelper(this);
 
         String imagePath = dbHelper.getProfileImagePath(userId);
 

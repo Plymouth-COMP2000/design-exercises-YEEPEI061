@@ -214,7 +214,7 @@ public class ChooseProfileActivity extends AppCompatActivity {
                             sessionEditor.putString("userId", userId);
                             sessionEditor.apply();
 
-                            UserSignupDbHelper dbHelper = new UserSignupDbHelper(this);
+                            UserSignupDatabaseHelper dbHelper = new UserSignupDatabaseHelper(this);
 
                             if (uploadedImageUri != null) {
                                 String filePath = saveImageToInternalStorage(uploadedImageUri, "profile_" + userId);

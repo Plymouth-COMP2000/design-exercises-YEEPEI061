@@ -28,7 +28,7 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
     private final Context context;
     private List<ReservationModel> list;
     private final OnStaffReservationListener listener;
-    private final UserSignupDbHelper dbHelper;
+    private final UserSignupDatabaseHelper dbHelper;
 
 
     public interface OnStaffReservationListener {
@@ -41,7 +41,7 @@ public class StaffReservationAdapter extends RecyclerView.Adapter<StaffReservati
         this.context = context;
         this.list = list;
         this.listener = listener;
-        this.dbHelper = new UserSignupDbHelper(context);
+        this.dbHelper = new UserSignupDatabaseHelper(context);
     }
 
 

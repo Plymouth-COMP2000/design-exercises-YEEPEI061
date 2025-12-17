@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MenuDatabaseHelper extends SQLiteOpenHelper {
 
-    private static final String DB_NAME = "staff_menu.db";
+    private static final String DB_NAME = "menu.db";
     private static final int DB_VERSION = 7;
     private static final String TABLE_MENU = "menu";
     private static final String COL_ID = "id";

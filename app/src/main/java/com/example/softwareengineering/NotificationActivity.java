@@ -95,7 +95,7 @@ public class NotificationActivity extends AppCompatActivity {
         String userId = userSession.getString("userId", "");
         String role = userSession.getString("role", "guest");
 
-        UserSignupDbHelper dbHelper = new UserSignupDbHelper(this);
+        UserSignupDatabaseHelper dbHelper = new UserSignupDatabaseHelper(this);
         long signupTime = dbHelper.getSignupTime(userId);
 
         String prefName = "guest".equalsIgnoreCase(role) ? "Notifications_" + userId : "Notifications_staff";

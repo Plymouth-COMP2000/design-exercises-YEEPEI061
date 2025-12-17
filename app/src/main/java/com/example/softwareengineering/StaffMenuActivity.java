@@ -138,7 +138,7 @@ public class StaffMenuActivity extends AppCompatActivity {
         SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
         String userId = session.getString("userId", "");
 
-        UserSignupDbHelper dbHelper = new UserSignupDbHelper(this);
+        UserSignupDatabaseHelper dbHelper = new UserSignupDatabaseHelper(this);
         long signupTime = dbHelper.getSignupTime(userId);
         SharedPreferences prefs = getSharedPreferences("NotificationPrefs_staff_" + userId, MODE_PRIVATE);
 
