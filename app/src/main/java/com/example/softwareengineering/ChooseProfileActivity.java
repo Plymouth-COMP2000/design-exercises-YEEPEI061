@@ -1,0 +1,277 @@
+package com.example.softwareengineering;
+
+import android.Manifest;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ImageView;
+import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
+public class ChooseProfileActivity extends AppCompatActivity {
+
+    private CardView boyCard, girlCard;
+    private ImageView tickBoy, tickGirl, previewUploadedImage;
+    private LinearLayout profileSelector, uploadedImageContainer;
+
+    private static final String BASE_URL = "http://10.240.72.69/comp2000/coursework/";
+    private static final String STUDENT_ID = "bsse2506028";
+    private Uri uploadedImageUri = null;
+    private String selectedGender = null;
+    private FrameLayout loadingOverlay;
+
+    ActivityResultLauncher<Intent> galleryLauncher;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_choose_profile);
+
+        boyCard = findViewById(R.id.boyCard);
+        girlCard = findViewById(R.id.girlCard);
+        tickBoy = findViewById(R.id.tickBoy);
+        tickGirl = findViewById(R.id.tickGirl);
+
+        profileSelector = findViewById(R.id.profileSelector);
+        uploadedImageContainer = findViewById(R.id.uploadedImageContainer);
+        previewUploadedImage = findViewById(R.id.previewUploadedImage);
+
+        Button uploadImageButton = findViewById(R.id.uploadImageButton);
+        Button confirmButton = findViewById(R.id.confirmButton);
+        Button skipButton = findViewById(R.id.skipButton);
+        loadingOverlay = findViewById(R.id.loadingOverlay);
+
+        uploadedImageContainer.setVisibility(View.GONE);
+
+        boyCard.setOnClickListener(v -> selectGender("boy"));
+        girlCard.setOnClickListener(v -> selectGender("girl"));
+
+
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+
+                        Uri imageUri = result.getData().getData();
+
+                        loadingOverlay.setVisibility(View.VISIBLE);
+
+                        new Thread(() -> {
+                            Bitmap processedBitmap = null;
+                            try {
+                                Bitmap original = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                                int size = Math.min(original.getWidth(), original.getHeight());
+                                Bitmap cropped = Bitmap.createBitmap(original,
+                                        (original.getWidth() - size)/2,
+                                        (original.getHeight() - size)/2,
+                                        size, size);
+                                processedBitmap = Bitmap.createScaledBitmap(cropped, 600, 600, true);
+
+                            } catch (Exception e) {
+                                Log.e("ChooseProfileActivity", "Error processing image", e);
+                            }
+
+                            Bitmap finalBitmap = processedBitmap;
+
+                            runOnUiThread(() -> {
+                                if (finalBitmap != null) {
+                                    previewUploadedImage.setImageBitmap(finalBitmap);
+                                }
+
+                                uploadedImageUri = imageUri;
+                                uploadedImageContainer.setVisibility(View.VISIBLE);
+                                profileSelector.setVisibility(View.GONE);
+
+                                selectedGender = null;
+                                tickBoy.setVisibility(View.GONE);
+                                tickGirl.setVisibility(View.GONE);
+
+                                loadingOverlay.setVisibility(View.GONE);
+                            });
+
+                        }).start();
+                    }
+                }
+        );
+
+        uploadImageButton.setOnClickListener(v -> openGallery());
+        confirmButton.setOnClickListener(v -> saveAndProceed());
+
+        skipButton.setOnClickListener(v -> {
+            SharedPreferences prefs = getSharedPreferences("UserSession", MODE_PRIVATE);
+            String role = prefs.getString("role", "guest");
+
+            Toast.makeText(this, "Please login now.", Toast.LENGTH_SHORT).show();
+
+            if ("guest".equals(role)) {
+                startActivity(new Intent(ChooseProfileActivity.this, LoginActivity.class));
+            } else {
+                startActivity(new Intent(ChooseProfileActivity.this, SettingsActivity.class));
+            }
+
+            finish();
+        });
+
+    }
+
+    private void selectGender(String gender) {
+
+        uploadedImageUri = null;
+        uploadedImageContainer.setVisibility(View.GONE);
+        profileSelector.setVisibility(View.VISIBLE);
+
+        selectedGender = gender;
+
+        if (gender.equals("boy")) {
+            tickBoy.setVisibility(View.VISIBLE);
+            tickGirl.setVisibility(View.GONE);
+            boyCard.setCardBackgroundColor(getColor(R.color.my_tertiary));
+            girlCard.setCardBackgroundColor(getColor(R.color.white));
+        } else {
+            tickGirl.setVisibility(View.VISIBLE);
+            tickBoy.setVisibility(View.GONE);
+            girlCard.setCardBackgroundColor(getColor(R.color.my_tertiary));
+            boyCard.setCardBackgroundColor(getColor(R.color.white));
+        }
+    }
+
+    private void openGallery() {
+        Intent intent;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+        } else {
+            intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        101
+                );
+                return;
+            }
+        }
+
+        galleryLauncher.launch(intent);
+    }
+
+    private void saveAndProceed() {
+        SharedPreferences session = getSharedPreferences("UserSession", MODE_PRIVATE);
+        String username = session.getString("username", null);
+
+        if (username == null) {
+            Toast.makeText(this, "No user detected.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (uploadedImageUri == null && selectedGender == null) {
+            Toast.makeText(this, "Please select a gender or upload a profile image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String url = BASE_URL + "read_user/" + STUDENT_ID + "/" + username;
+
+        loadingOverlay.setVisibility(View.VISIBLE);
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                com.android.volley.Request.Method.GET,
+                url,
+                null,
+                response -> {
+                    try {
+                        if (response.has("user")) {
+                            JSONObject user = response.getJSONObject("user");
+                            String userId = user.getString("_id");
+
+                            SharedPreferences.Editor sessionEditor = session.edit();
+                            sessionEditor.putString("userId", userId);
+                            sessionEditor.apply();
+
+                            UserSignupDatabaseHelper dbHelper = new UserSignupDatabaseHelper(this);
+
+                            if (uploadedImageUri != null) {
+                                String filePath = saveImageToInternalStorage(uploadedImageUri, "profile_" + userId);
+                                if (filePath != null) {
+                                    dbHelper.updateProfileImage(userId, filePath);
+                                }
+                            } else if (selectedGender != null) {
+                                dbHelper.updateProfileGender(userId, selectedGender);
+                            }
+
+                            Toast.makeText(this, "Profile set successfully! Please log in now", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(ChooseProfileActivity.this, LoginActivity.class));
+
+                            finish();
+                        }
+                    } catch (Exception e) {
+                        Log.e("ChooseProfileActivity", "Error setting profile", e);
+                        loadingOverlay.setVisibility(View.GONE);
+                    }
+                },
+                error -> {
+                    Toast.makeText(this, "Failed to fetch user info", Toast.LENGTH_SHORT).show();
+                    loadingOverlay.setVisibility(View.GONE);
+                }
+        );
+
+        Volley.newRequestQueue(this).add(request);
+    }
+
+    private String saveImageToInternalStorage(Uri uri, String fileNamePrefix) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+
+            if (inputStream == null) {
+                Log.e("ChooseProfileActivity", "Failed to open input stream for URI: " + uri);
+                return null;
+            }
+
+            String fileName = fileNamePrefix + ".jpg";
+            File file = new File(getFilesDir(), fileName);
+
+            FileOutputStream outputStream = new FileOutputStream(file);
+            byte[] buffer = new byte[4096];
+            int len;
+
+            while ((len = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, len);
+            }
+
+            outputStream.close();
+            inputStream.close();
+
+            return file.getAbsolutePath();
+
+        } catch (Exception e) {
+            Log.e("ChooseProfileActivity", "Error saving image to internal storage", e);
+            return null;
+        }
+    }
+}
